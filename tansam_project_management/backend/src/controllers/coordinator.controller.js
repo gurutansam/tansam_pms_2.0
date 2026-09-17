@@ -1,5 +1,4 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
 import { sendMail } from "../utils/mail.util.js";
 import {
   assignedOpportunityTemplate,
@@ -132,8 +131,6 @@ export const createOpportunity = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { coordinator: true });
-
     const normalizedClientName = normalizeClientName(clientName);
     const opportunityId = await generateOpportunityId(db);
 
@@ -324,8 +321,6 @@ export const checkSimilarClient = async (req, res) => {
   if (!name || name.length < 3) return res.json(null);
 
   const db = await connectDB();
-  await initSchemas(db, { coordinator: true });
-
   const normalize = (v) =>
     v.trim().replace(/\s+/g, " ").toUpperCase();
 
@@ -356,8 +351,6 @@ export const checkSimilarClient = async (req, res) => {
 ====================================================== */
 export const getOpportunities = async (req, res) => {
   const db = await connectDB();
-  await initSchemas(db, { coordinator: true });
-
   let sql = `SELECT * FROM opportunities_coordinator`;
   const params = [];
 
@@ -399,8 +392,6 @@ export const updateOpportunity = async (req, res) => {
     } = req.body;
 
     const db = await connectDB();
-    await initSchemas(db, { coordinator: true });
-
     /* ================= FETCH OLD DATA ================= */
 
     const [[oldOpp]] = await db.execute(
@@ -779,8 +770,6 @@ export const getOpportunityTrackers = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { coordinator: true });
-
     let query = `
       SELECT t.*
       FROM opportunity_tracker t

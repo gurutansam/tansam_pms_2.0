@@ -90,9 +90,9 @@ tbody td {
 }
 
 .page-btn.active {
-  background: #2563eb;
+  background: #00646e;
   color: #fff;
-  border-color: #2563eb;
+  border-color: #00646e;
   font-weight: 600;
 }
 
@@ -520,9 +520,9 @@ tbody td {
 }
 
 .phase-tabs .active-tab {
-  background: #2563eb;
+  background: #00646e;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 10px rgba(0, 100, 110, 0.3);
 }
 .card-table {
   background: #ffffff;
@@ -794,17 +794,17 @@ CSS.finance-modal-overlay {
   box-shadow: none;
 }
 button.btn-save {
-  background-color: #2563eb !important;
+  background-color: #00646e !important;
   color: #ffffff !important;
   border: none !important;
 }
 
 button.btn-save:hover {
-  background-color: #1e40af !important;
+  background-color: #004d55 !important;
 }
 .followup-card {
   background: #f9fafb;
-  border-left: 4px solid #2563eb;
+  border-left: 4px solid #00646e;
   padding: 12px;
   border-radius: 8px;
   font-size: 13px;

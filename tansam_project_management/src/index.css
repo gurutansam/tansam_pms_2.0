@@ -1,13 +1,28 @@
-/* Global font setup */
-* {
-  box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: #172033;
+  background: #f5f7fb;
+  font-synthesis: none;
+
+  /* Siemens Brand Palette Tokens */
+  --primary: #00646e;
+  --primary-hover: #004d55;
+  --primary-light: #009999;
+  --primary-subtle: #e0f2f1;
+  --teal-accent: #5ce1e6;
+  --teal-dark: #011c20;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial,
-    sans-serif;
-}
+* { box-sizing: border-box; }
+html, body, #root { min-width: 320px; min-height: 100%; margin: 0; }
+body { min-height: 100vh; }
+button, input, select, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.table-wrapper, .card-table { border: 1px solid #e5eaf2; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(26, 39, 67, .045); }
+.primary-btn, .btn-add-quotation { border: 0 !important; border-radius: 9px !important; background: linear-gradient(135deg, #00646e, #008a94) !important; color: #fff !important; font-weight: 700; box-shadow: 0 6px 14px rgba(0, 100, 110, .22); transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+.primary-btn:hover, .btn-add-quotation:hover { background: #004d55 !important; transform: translateY(-1px); box-shadow: 0 9px 18px rgba(0, 100, 110, .32); }
+.secondary-btn { border-radius: 9px !important; }
+.modal-overlay { backdrop-filter: blur(4px); }
+.modal-box { border-radius: 16px !important; box-shadow: 0 24px 60px rgba(15, 23, 42, .2) !important; }

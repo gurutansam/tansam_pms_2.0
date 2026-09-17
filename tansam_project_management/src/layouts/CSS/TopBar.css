@@ -1,30 +1,9 @@
-.topbar {
-  height: 60px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-}
-
-.page-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.user-name {
-  font-size: 14px;
-  margin-right: 16px;
-  color: #374151;
-}
-
-.logout-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+.topbar { height: 74px; padding: 0 32px; background: rgba(255,255,255,.92); border-bottom: 1px solid #e7ebf2; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px); }
+.topbar-left { display: flex; flex-direction: column; gap: 2px; }
+.topbar-eyebrow { color: #00646e; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.page-title { color: #172033; font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.user-name { color: #5b6880; font-size: 12px; font-weight: 700; }
+.logout-btn { border: 1px solid #e3e7ef; border-radius: 8px; padding: 8px 12px; background: #fff; color: #475569; font-size: 12px; font-weight: 700; cursor: pointer; transition: .18s ease; }
+.logout-btn:hover { border-color: #009999; color: #00646e; background: #e0f2f1; }
+@media (max-width: 600px) { .topbar { height: 62px; padding: 0 18px; } .user-name { display: none; } }

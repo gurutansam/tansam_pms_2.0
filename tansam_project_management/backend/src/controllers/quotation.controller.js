@@ -1,7 +1,6 @@
 import { connectDB } from "../config/db.js";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { createQuotationDocx } from "../utils/QuotationDocx.js";
-import { initSchemas } from "../schema/main.schema.js";
 import { G } from "@react-pdf/renderer";
 // Get all quotations
 
@@ -52,7 +51,6 @@ export const generateQuotationNo = async (req, res) => {
 export const getQuotations = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
     const [rows] = await db.execute(
       "SELECT * FROM quotations ORDER BY id ASC"
     );
@@ -67,7 +65,6 @@ export const getQuotations = async (req, res) => {
 export const addQuotation = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true, coordinator: true });
     //const quotationNo = await generateQuotationNo(db);
 
     const {
@@ -311,8 +308,6 @@ await db.execute(
 export const updateQuotation = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const { id } = req.params;
 
     // Fetch existing quotation
@@ -655,8 +650,6 @@ export const deleteQuotation = async (req, res) => {
   try {
     const { id } = req.params;
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     // 🔴 CRITICAL: delete child rows FIRST
     await db.execute(
       "DELETE FROM generated_quotations WHERE quotationId = ?",
@@ -684,7 +677,6 @@ export const deleteQuotation = async (req, res) => {
 
 export const getQuotationById = async (id) => {
   const db = await connectDB();
-  await initSchemas(db, { finance: true });
   const [rows] = await db.execute("SELECT * FROM quotations WHERE id=?", [id]);
   return rows[0]; // or null if not found
 };

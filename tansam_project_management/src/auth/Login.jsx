@@ -37,73 +37,64 @@ function Login({ setUser }) {
     <div className="login-bg">
       <ToastContainer />
 
-      <div className="login-card-split">
-        {/* LEFT PANEL – BALLPIT */}
-        <div className="login-left-panel">
-          <div className="ballpit-wrapper">
-            <Ballpit
-              count={80}
-              gravity={0.01}
-              friction={0.9975}
-              wallBounce={0.95}
-              followCursor={false}
+      {/* FULLSCREEN BALLPIT BACKGROUND */}
+      <div className="ballpit-fullscreen">
+        <Ballpit
+          count={100}
+          gravity={0.01}
+          friction={0.9975}
+          wallBounce={0.95}
+          followCursor={false}
+        />
+      </div>
+
+      {/* CENTERED SEAMLESS LOGIN CARD */}
+      <div className="login-card-glass">
+        <div className="logo-row">
+          <img src={tansamLogo} alt="TANSAM" />
+          <span>TANSAM | PMS</span>
+        </div>
+
+        <h3>SIGN IN</h3>
+        <p className="subtext">Project Management System</p>
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-box">
+            <FiUser className="input-icon-left" />
+            <input
+              type="email"
+              placeholder="Username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
-          <div className="left-overlay-text">
-            <h2>PROJECT MANAGEMENT SYSTEM</h2>
-            {/* <h2>SYSTEM</h2> */}
+          <div className="input-box">
+            <FiLock className="input-icon-left" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="eye-inside"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </span>
           </div>
-        </div>
 
-        {/* RIGHT PANEL */}
-        <div className="login-right-panel">
-          <div className="logo-row">
-            <img src={tansamLogo} alt="TANSAM" />
-            <span>TANSAM | PMS</span>
+          <div className="login-btn-wrapper">
+            <button type="submit" disabled={loading}>
+              {loading ? "AUTHENTICATING..." : "LOGIN"}
+            </button>
           </div>
+        </form>
 
-          <h3>SIGN IN</h3>
-          <p className="subtext">To manage your projects</p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="input-box">
-              <FiUser />
-              <input
-                type="email"
-                placeholder="Username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="input-box">
-              <FiLock />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <span
-                className="eye-inside"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </span>
-            </div>
-
-            <div className="login-btn-wrapper">
-              <button type="submit" disabled={loading}>
-                {loading ? "AUTHENTICATING..." : "LOGIN"}
-              </button>
-            </div>
-          </form>
-
-          <p className="powered">© 2026 TANSAM </p>
-        </div>
+        <p className="powered">© 2026 TANSAM</p>
       </div>
     </div>
   );

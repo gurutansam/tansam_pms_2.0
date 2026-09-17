@@ -1,14 +1,8 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* ================= GET ================= */
 export const getForecasts = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // ✅ THIS WAS MISSING
-    await initSchemas(db, { createCeoForecastSchema: true });
-
     const [rows] = await db.execute(
       "SELECT * FROM ceo_forecast ORDER BY created_at DESC"
     );
@@ -24,10 +18,6 @@ export const getForecasts = async (req, res) => {
 export const createForecast = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // ✅ THIS WAS MISSING
-    await initSchemas(db, { createCeoForecastSchema: true });
-
     const {
       workCategoryId,
       workCategoryName,
@@ -83,10 +73,6 @@ export const createForecast = async (req, res) => {
 export const updateForecast = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // ✅ SAFE (no-op if already exists)
-    await initSchemas(db, { createCeoForecastSchema: true });
-
     const { id } = req.params;
     const {
       workCategoryId,
@@ -139,10 +125,6 @@ export const updateForecast = async (req, res) => {
 export const deleteForecast = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // ✅ SAFE
-    await initSchemas(db, { createCeoForecastSchema: true });
-
     const { id } = req.params;
 
     await db.execute(

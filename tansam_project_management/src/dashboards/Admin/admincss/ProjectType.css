@@ -141,11 +141,11 @@
 }
 
 .icon-btn.edit {
-  color: #2563eb; /* blue-600 */
+  color: #00646e;
 }
 
 .icon-btn.edit:hover {
-  background: #dbeafe; /* blue-100 */
+  background: #e0f2f1;
 }
 
 /* ================================

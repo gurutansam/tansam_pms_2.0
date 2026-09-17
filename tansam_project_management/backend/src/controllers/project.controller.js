@@ -1,14 +1,10 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* ======================================================
    CREATE PROJECT
 ====================================================== */
 export const createProject = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { project: true });
-
     // 🔐 USER INFO FROM HEADERS
     const userId = req.headers["x-user-id"];
     const role = req.headers["x-user-role"];

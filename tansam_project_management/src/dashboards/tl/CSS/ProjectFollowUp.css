@@ -83,8 +83,8 @@
 }
 
 .status-badge.in-progress {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #e0f2f1;
+  color: #00646e;
 }
 
 .status-badge.completed {
@@ -182,13 +182,13 @@
   background: #dcfce7; /* green-100 */
 }
 
-/* Edit - Blue (same as CreateProject edit) */
+/* Edit - Siemens Teal */
 .icon-btn.edit-btn {
-  color: #2563eb;     /* blue-600 */
+  color: #00646e;
 }
 
 .icon-btn.edit-btn:hover:not(:disabled) {
-  background: #dbeafe; /* blue-100 */
+  background: #e0f2f1;
 }
 
 /* Disabled */
@@ -542,7 +542,7 @@
 .issue-view-btn {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: #00646e;
   cursor: pointer;
   padding: 4px 6px;
   border-radius: 6px;
@@ -552,8 +552,8 @@
 }
 
 .issue-view-btn:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
+  background: #e0f2f1;
+  color: #004d55;
 }
 
 /* Urgency badge (optional) */

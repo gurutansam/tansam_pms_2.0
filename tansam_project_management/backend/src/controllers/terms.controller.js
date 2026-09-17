@@ -1,14 +1,10 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* ===========================
    GET ALL TERMS
 =========================== */
 export const getTerms = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const [rows] = await db.execute(
       "SELECT * FROM terms_conditions ORDER BY id DESC"
     );
@@ -26,8 +22,6 @@ export const getTerms = async (req, res) => {
 export const addTerms = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const { content, status } = req.body;
 
     if (!content) {
@@ -58,8 +52,6 @@ export const addTerms = async (req, res) => {
 export const updateTerms = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const { id } = req.params;
     const { content, status } = req.body;
 
@@ -104,8 +96,6 @@ export const deleteTerms = async (req, res) => {
 export const getActiveTerms = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const [rows] = await db.execute(`
       SELECT * FROM terms_conditions
       WHERE status='Active'

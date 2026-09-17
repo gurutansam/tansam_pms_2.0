@@ -1,12 +1,8 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* GET MEMBERS */
 export const getMembers = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { member: true, department: true });
-
     const [rows] = await db.execute(`
       SELECT
         m.id,
@@ -32,8 +28,6 @@ export const createMember = async (req, res) => {
     const { name, email, designation, departmentId } = req.body;
 
     const db = await connectDB();
-    await initSchemas(db, { member: true });
-
     await db.execute(
       `INSERT INTO members (name, email, designation, department_id)
        VALUES (?, ?, ?, ?)`,

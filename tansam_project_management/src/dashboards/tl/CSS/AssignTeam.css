@@ -216,7 +216,7 @@
 .assign-edit-btn {
   background: transparent;
   border: none;
-  color: #2563eb;
+  color: #00646e;
   cursor: pointer;
   padding: 8px;
   border-radius: 10px;
@@ -226,7 +226,7 @@
 }
 
 .assign-edit-btn:hover {
-  background: #dbeafe;
+  background: #e0f2f1;
   transform: scale(1.1);
 }
 .loader-text {

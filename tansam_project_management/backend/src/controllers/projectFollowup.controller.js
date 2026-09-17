@@ -1,16 +1,8 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* ================= GET PROJECT FOLLOW UPS ================= */
 export const getProjectFollowups = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, {
-      project: true,
-      assignTeam: true,
-      projectFollowup: true,
-    });
-
     const [rows] = await db.execute(`
   SELECT
     p.id AS projectId,
@@ -63,7 +55,6 @@ export const getProjectFollowups = async (req, res) => {
 // export const createProjectFollowup = async (req, res) => {
 //   try {
 //     const db = await connectDB();
-//     await initSchemas(db, { projectFollowup: true });
 
 //     const {
 //       projectId,

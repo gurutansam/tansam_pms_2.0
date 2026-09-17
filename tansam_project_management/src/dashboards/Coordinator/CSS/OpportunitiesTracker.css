@@ -175,17 +175,17 @@
 ============================ */
 
 .icon-btn {
-  background: transparent;
+  background: none;
   border: none;
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
-  color: #2563eb;
+  color: #00646e;
   transition: all 0.15s ease;
 }
 
 .icon-btn:hover {
-  background: #e0e7ff;
+  background: #e0f2f1;
 }
 
 .remove-btn {
@@ -222,9 +222,9 @@
 }
 
 .page-btn.active {
-  background: #2563eb;
+  background: #00646e;
   color: #ffffff;
-  border-color: #2563eb;
+  border-color: #00646e;
 }
 
 .page-btn:disabled {
@@ -328,7 +328,7 @@
 }
 
 .modal-actions button[type="submit"] {
-  background: #2563eb;
+  background: #00646e;
   color: #ffffff;
 }
 

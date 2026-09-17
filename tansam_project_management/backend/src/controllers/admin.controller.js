@@ -1,5 +1,4 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
 import bcrypt from "bcryptjs";
 
 /**
@@ -8,10 +7,6 @@ import bcrypt from "bcryptjs";
 export const getRoles = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // 🔥 Load ADMIN schemas only
-    await initSchemas(db, { admin: true });
-
     const [roles] = await db.execute(
       "SELECT id, name, status FROM roles ORDER BY id"
     );
@@ -35,8 +30,6 @@ export const createRole = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "INSERT INTO roles (name) VALUES (?)",
       [name.toUpperCase()]
@@ -81,10 +74,6 @@ export const updateRole = async (req, res) => {
 export const getLabs = async (req, res) => {
   try {
     const db = await connectDB();
-
-    // 🔥 Load ADMIN schemas
-    await initSchemas(db, { admin: true });
-
     const [labs] = await db.execute(
       "SELECT id, name, status FROM labs_admin ORDER BY id"
     );
@@ -108,8 +97,6 @@ export const createLab = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "INSERT INTO labs_admin (name, status) VALUES (?, ?)",
       [name.trim(), status || "ACTIVE"]
@@ -139,8 +126,6 @@ export const updateLab = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "UPDATE labs_admin SET name=?, status=? WHERE id=?",
       [name.trim(), status || "ACTIVE", id]
@@ -158,8 +143,6 @@ export const updateLab = async (req, res) => {
 export const getProjectTypes = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     const [types] = await db.execute(
       "SELECT id, name, status FROM project_types_admin ORDER BY id"
     );
@@ -185,8 +168,6 @@ export const createProjectType = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "INSERT INTO project_types_admin (name, status) VALUES (?, ?)",
       [name.trim(), status || "ACTIVE"]
@@ -220,8 +201,6 @@ export const updateProjectType = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "UPDATE project_types_admin SET name=?, status=? WHERE id=?",
       [name.trim(), status || "ACTIVE", id]
@@ -240,8 +219,6 @@ export const updateProjectType = async (req, res) => {
 export const getClientTypes = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     const [types] = await db.execute(
       "SELECT id, name, status FROM client_types_admin ORDER BY id"
     );
@@ -264,8 +241,6 @@ export const createClientType = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "INSERT INTO client_types_admin (name, status) VALUES (?, ?)",
       [name.trim().toUpperCase(), status || "ACTIVE"]
@@ -296,8 +271,6 @@ export const updateClientType = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "UPDATE client_types_admin SET name=?, status=? WHERE id=?",
       [name.trim().toUpperCase(), status || "ACTIVE", id]
@@ -317,8 +290,6 @@ export const updateClientType = async (req, res) => {
 export const getWorkCategories = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     const [categories] = await db.execute(
       "SELECT id, name, status FROM work_categories ORDER BY id"
     );
@@ -344,8 +315,6 @@ export const createWorkCategory = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "INSERT INTO work_categories (name, status) VALUES (?, ?)",
       [name.trim(), status || "ACTIVE"]
@@ -379,8 +348,6 @@ export const updateWorkCategory = async (req, res) => {
     }
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       "UPDATE work_categories SET name=?, status=? WHERE id=?",
       [name.trim(), status || "ACTIVE", id]
@@ -399,8 +366,6 @@ export const updateWorkCategory = async (req, res) => {
 export const getUsers = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     const [users] = await db.execute(`
       SELECT id, name, mobile, email, role, lab, status
       FROM users_admin
@@ -430,8 +395,6 @@ export const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       `
       INSERT INTO users_admin
@@ -471,8 +434,6 @@ export const updateUser = async (req, res) => {
     const { role, lab, status } = req.body;
 
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     await db.execute(
       `
       UPDATE users_admin
@@ -498,8 +459,6 @@ export const updateUser = async (req, res) => {
 export const getAdminDashboardCounts = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { admin: true });
-
     const [
       [roles],
       [labs],

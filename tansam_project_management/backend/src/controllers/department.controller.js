@@ -1,12 +1,8 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* GET ALL DEPARTMENTS */
 export const getDepartments = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { department: true });
-
     const [rows] = await db.execute(
       "SELECT id, name FROM departments ORDER BY name"
     );
@@ -22,8 +18,6 @@ export const createDepartment = async (req, res) => {
   try {
     const { name } = req.body;
     const db = await connectDB();
-    await initSchemas(db, { department: true });
-
     await db.execute(
       "INSERT INTO departments (name) VALUES (?)",
       [name]

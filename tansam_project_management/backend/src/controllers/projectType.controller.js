@@ -1,13 +1,9 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
-
 /* GET PROJECT TYPES (TL) */
 export const getProjectTypes = async (req, res) => {
   const db = await connectDB();
 
   // ✅ REQUIRED
-  await initSchemas(db, { projectType: true });
-
   const [rows] = await db.execute(
     `SELECT id, name, status
      FROM project_types
@@ -23,8 +19,6 @@ export const createProjectType = async (req, res) => {
   const userId = req.user.id;
 
   const db = await connectDB();
-  await initSchemas(db, { projectType: true });
-
   await db.execute(
     `INSERT INTO project_types (name, created_by)
      VALUES (?, ?)`,
@@ -40,8 +34,6 @@ export const updateProjectType = async (req, res) => {
   const { name, status } = req.body;
 
   const db = await connectDB();
-  await initSchemas(db, { projectType: true });
-
   await db.execute(
     `UPDATE project_types SET name=?, status=? WHERE id=?`,
     [name, status, id]
@@ -54,8 +46,6 @@ export const updateProjectType = async (req, res) => {
 export const deleteProjectType = async (req, res) => {
   const { id } = req.params;
   const db = await connectDB();
-  await initSchemas(db, { projectType: true });
-
   await db.execute(`DELETE FROM project_types WHERE id=?`, [id]);
   res.json({ message: "Project type deleted" });
 };

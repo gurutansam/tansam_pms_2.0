@@ -65,9 +65,10 @@
 
 .saveBtn {
   padding: 6px 10px;
-  background: #2563eb;
+  background: #00646e;
   color: #fff;
   border: none;
+  border-radius: 4px;
 }
 
 /* Action Buttons */
@@ -85,7 +86,7 @@
 }
 
 .moreBtn {
-  background: #2563eb;
+  background: #00646e;
   color: #fff;
   border: none;
   padding: 4px 8px;
@@ -124,7 +125,7 @@
 }
 
 .tabBtn.active {
-  background: #2563eb;
+  background: #00646e;
   color: #fff;
 }
 /* Action column cell */
@@ -195,7 +196,8 @@
 .saveBtn {
   padding: 6px 12px;
   border: none;
-  background: #2563eb;
+  border-radius: 4px;
+  background: #00646e;
   color: white;
   cursor: pointer;
 }

@@ -283,13 +283,13 @@
   height: 36px;
 }
 
-/* Edit - Blue */
+/* Edit - Siemens Teal */
 .edit-btn {
-  color: #2563eb;     /* blue-600 */
+  color: #00646e;
 }
 
 .edit-btn:hover:not(:disabled) {
-  background: #dbeafe; /* blue-100 */
+  background: #e0f2f1;
 }
 
 /* Delete - Red */

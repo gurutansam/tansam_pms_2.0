@@ -194,11 +194,11 @@
 }
 
 .icon-btn.edit {
-  color: #2563eb;
+  color: #00646e;
 }
 
 .icon-btn.edit:hover {
-  background: #e0e7ff;
+  background: #e0f2f1;
 }
 
 .icon-btn.delete {
@@ -454,7 +454,7 @@
   width: 44px;
   height: 44px;
   border: 4px solid #ddd;
-  border-top: 4px solid #2563eb;
+  border-top: 4px solid #00646e;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 12px;
@@ -499,7 +499,7 @@
 }
 
 .toast-info {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #00646e, #009999);
 }
 
 .pagination {

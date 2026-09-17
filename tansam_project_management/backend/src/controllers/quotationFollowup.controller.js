@@ -1,10 +1,8 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
 // Get all follow-ups
 export const getFollowups = async (req, res) => {
   try {
     const db = await connectDB();
-        await initSchemas(db, { finance: true });
     const [rows] = await db.execute(
       "SELECT * FROM quotation_followups ORDER BY id DESC"
     );
@@ -19,7 +17,6 @@ export const getFollowups = async (req, res) => {
 export const addFollowup = async (req, res) => {
   try {
        const db = await connectDB();
-        await initSchemas(db, { finance: true });
     const {
       project_name, 
       quoteValue,
@@ -59,7 +56,6 @@ export const addFollowup = async (req, res) => {
 export const updateFollowup = async (req, res) => {
   try {
        const db = await connectDB();
-        await initSchemas(db, { finance: true });
     const { id } = req.params;
     const {
       project_name,  
@@ -108,7 +104,6 @@ export const updateFollowup = async (req, res) => {
 export const deleteFollowup = async (req, res) => {
   try {
     const db = await connectDB();
-        await initSchemas(db, { finance: true });
     await db.execute("DELETE FROM quotation_followups WHERE id=?", [
       req.params.id,
     ]);

@@ -1,13 +1,11 @@
 // controllers/generatedQuotation.controller.js
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
 // import { generateQuotationPdf } from "../utils/generateQuotationPdf.js"; // if you want backend PDF generation
 
 // Get all generated quotations
 export const getGeneratedQuotations = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
     const [rows] = await db.execute(
       "SELECT * FROM generated_quotations ORDER BY id DESC"
     );
@@ -25,8 +23,6 @@ export const getGeneratedQuotations = async (req, res) => {
 export const addGeneratedQuotation = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
-
     const quotationId = req.body.quotation_id;
     if (!quotationId) {
       return res.status(400).json({ message: "Missing quotation_id" });
@@ -135,8 +131,6 @@ export const addGeneratedQuotation = async (req, res) => {
 // GET /api/generatequotation/by-quotation/:quotationId
 export const getGeneratedQuotationByQuotationId = async (req, res) => {
   const db = await connectDB();
-  await initSchemas(db, { finance: true });
-
   const { quotationId } = req.params;
 
   const [rows] = await db.execute(
@@ -152,7 +146,6 @@ export const getGeneratedQuotationByQuotationId = async (req, res) => {
 export const updateGeneratedQuotation = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { finance: true });
     const { id } = req.params;
     const {
       quotationNo,

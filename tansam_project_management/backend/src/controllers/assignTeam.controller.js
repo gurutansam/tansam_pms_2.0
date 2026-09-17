@@ -1,5 +1,4 @@
 import { connectDB } from "../config/db.js";
-import { initSchemas } from "../schema/main.schema.js";
 import { sendMail } from "../utils/mail.util.js";
 import {
   assignedProjectTeamTemplate,
@@ -21,8 +20,6 @@ export const assignTeamMember = async (req, res) => {
     } = req.body;
 
     const db = await connectDB();
-    await initSchemas(db, { assignTeam: true });
-
     /* 1️⃣ INSERT ASSIGNMENT */
 await db.execute(
   `INSERT INTO project_team_assignments
@@ -111,7 +108,6 @@ const [[member]] = await db.execute(
 export const getAssignments = async (req, res) => {
   try {
     const db = await connectDB();
-    await initSchemas(db, { assignTeam: true });
 const [rows] = await db.execute(`
   SELECT
     a.id,

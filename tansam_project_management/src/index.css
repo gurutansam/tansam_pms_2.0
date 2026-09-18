@@ -21,8 +21,59 @@ body { min-height: 100vh; }
 button, input, select, textarea { font: inherit; }
 button { -webkit-tap-highlight-color: transparent; }
 .table-wrapper, .card-table { border: 1px solid #e5eaf2; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(26, 39, 67, .045); }
-.primary-btn, .btn-add-quotation { border: 0 !important; border-radius: 9px !important; background: linear-gradient(135deg, #00646e, #008a94) !important; color: #fff !important; font-weight: 700; box-shadow: 0 6px 14px rgba(0, 100, 110, .22); transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
-.primary-btn:hover, .btn-add-quotation:hover { background: #004d55 !important; transform: translateY(-1px); box-shadow: 0 9px 18px rgba(0, 100, 110, .32); }
+/* Primary / CTA Buttons across all routes (Siemens Petrol & Teal Gradient) */
+body:not(:has(.login-bg)) .primary-btn,
+body:not(:has(.login-bg)) .btn-primary,
+body:not(:has(.login-bg)) .btn-add-quotation,
+body:not(:has(.login-bg)) .add-btn,
+body:not(:has(.login-bg)) .assign-add-btn,
+body:not(:has(.login-bg)) .assign-save-btn,
+body:not(:has(.login-bg)) .member-add-btn-modern,
+body:not(:has(.login-bg)) .member-add-btn,
+body:not(:has(.login-bg)) .dept-add-btn,
+body:not(:has(.login-bg)) .view-po-btn,
+body:not(:has(.login-bg)) .save-tracker-btn,
+body:not(:has(.login-bg)) button.btn-save,
+body:not(:has(.login-bg)) .type-form button,
+body:not(:has(.login-bg)) .opportunity-actions button,
+body:not(:has(.login-bg)) .tracker-actions button {
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: linear-gradient(135deg, #00646e, #008a94) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.25) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+  cursor: pointer !important;
+}
+
+body:not(:has(.login-bg)) .primary-btn:hover,
+body:not(:has(.login-bg)) .btn-primary:hover,
+body:not(:has(.login-bg)) .btn-add-quotation:hover,
+body:not(:has(.login-bg)) .add-btn:hover,
+body:not(:has(.login-bg)) .assign-add-btn:hover,
+body:not(:has(.login-bg)) .assign-save-btn:hover,
+body:not(:has(.login-bg)) .member-add-btn-modern:hover,
+body:not(:has(.login-bg)) .member-add-btn:hover,
+body:not(:has(.login-bg)) .dept-add-btn:hover,
+body:not(:has(.login-bg)) .view-po-btn:hover,
+body:not(:has(.login-bg)) .save-tracker-btn:hover,
+body:not(:has(.login-bg)) button.btn-save:hover,
+body:not(:has(.login-bg)) .type-form button:hover,
+body:not(:has(.login-bg)) .opportunity-actions button:hover,
+body:not(:has(.login-bg)) .tracker-actions button:hover {
+  background: #004d55 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 18px rgba(0, 100, 110, 0.35) !important;
+}
+
+/* Pagination active state */
+body:not(:has(.login-bg)) .pagination button.active {
+  background: #00646e !important;
+  color: #ffffff !important;
+  border-color: #00646e !important;
+}
+
 .secondary-btn { border-radius: 9px !important; }
 .modal-overlay { backdrop-filter: blur(4px); }
 .modal-box { border-radius: 16px !important; box-shadow: 0 24px 60px rgba(15, 23, 42, .2) !important; }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff, FiLock, FiUser } from "react-icons/fi";
 import { loginUser } from "../services/api";
@@ -17,6 +17,21 @@ function Login({ setUser }) {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        const u = JSON.parse(stored);
+        if (u?.route) {
+          setUser(u);
+          navigate(u.route, { replace: true });
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [navigate, setUser]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -11,6 +11,8 @@ import {
   getGeneratedQuotationByQuotationId,
 } from "../../services/quotation/generatedQuotation.api";
 import QuotationPDF from "./QuotationPdf.jsx";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 // ✅ EditableQuotationTable Component (UNCHANGED)
 export const EditableQuotationTable = ({ quotation, setQuotation }) => {
@@ -195,7 +197,16 @@ export const EditableQuotationTable = ({ quotation, setQuotation }) => {
       </div>
       <button
         onClick={addRow}
-        style={{ marginBottom: "10px", padding: "8px 16px" }}
+        style={{
+          marginBottom: "10px",
+          padding: "8px 16px",
+          background: "linear-gradient(135deg, #00646e, #008a94)",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          fontWeight: "600",
+          cursor: "pointer",
+        }}
       >
         Add Row
       </button>
@@ -218,6 +229,7 @@ const FinanceDocument = ({
   setShowPreview,
   savedQuotation,
   handleSaveQuotation,
+  handleBack,
   showTermsModal,
   setShowTermsModal,
   termsList,
@@ -232,15 +244,71 @@ const FinanceDocument = ({
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
+        justifyContent: "flex-start",
         alignItems: "center",
         minHeight: "100vh",
         width: "100%",
         boxSizing: "border-box",
+        padding: "20px 16px 40px 16px",
         margin: 0,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "#f1f5f9",
       }}
     >
+      {/* ⬅ Top Back Navigation Bar */}
+      <div
+        style={{
+          width: "1200px",
+          maxWidth: "95%",
+          marginBottom: "16px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <button
+          type="button"
+          onClick={handleBack}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "9px 18px",
+            fontSize: "14px",
+            fontWeight: "700",
+            color: "#0f172a",
+            backgroundColor: "#ffffff",
+            border: "1px solid #cbd5e1",
+            borderRadius: "8px",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#e2e8f0";
+            e.currentTarget.style.transform = "translateX(-2px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#ffffff";
+            e.currentTarget.style.transform = "translateX(0)";
+          }}
+          aria-label="Back to Finance"
+          title="Back to Finance"
+        >
+          <FaArrowLeft /> Back to Finance
+        </button>
+
+        <span
+          style={{
+            fontSize: "13px",
+            fontWeight: "600",
+            color: "#64748b",
+          }}
+        >
+          {refNo ? `Quotation: ${refNo}` : "Generate Quotation"}
+        </span>
+      </div>
+
       <div
         style={{
           backgroundColor: "#fff",
@@ -642,8 +710,35 @@ const FinanceDocument = ({
           GSTIN:- 33AAJCT2401Q1Z7 | CIN : U91990TN2022NPL150529
         </div>
 
-        {/* Action Buttons - NOW WORKS */}
-        <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+        {/* Action Buttons */}
+        <div style={{ marginTop: "16px", display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+          <button
+            type="button"
+            onClick={handleBack}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "10px 20px",
+              fontSize: "15px",
+              fontWeight: "600",
+              backgroundColor: "#64748b",
+              color: "#fff",
+              borderRadius: "4px",
+              border: "none",
+              cursor: "pointer",
+              transition: "background-color 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#475569";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#64748b";
+            }}
+            aria-label="Back to Finance"
+          >
+            <FaArrowLeft /> Back to Finance
+          </button>
           <PDFDownloadLink
             document={
               <QuotationPDF
@@ -670,10 +765,12 @@ const FinanceDocument = ({
             style={{
               padding: "10px 20px",
               fontSize: "16px",
-              backgroundColor: "#1F4E79",
+              background: "linear-gradient(135deg, #00646e, #008a94)",
               color: "#fff",
               textDecoration: "none",
               borderRadius: "4px",
+              fontWeight: "600",
+              display: "inline-block",
             }}
           >
             {({ loading }) => (loading ? "Generating PDF..." : "Download PDF")}
@@ -683,10 +780,11 @@ const FinanceDocument = ({
             style={{
               padding: "10px 20px",
               fontSize: "16px",
-              backgroundColor: "#1F4E79",
+              background: "linear-gradient(135deg, #00646e, #008a94)",
               color: "#fff",
               borderRadius: "4px",
               border: "none",
+              fontWeight: "600",
               cursor: "pointer",
             }}
           >
@@ -736,7 +834,7 @@ const FinanceDocument = ({
                 <button
                   onClick={() => setShowTermsModal(false)}
                   style={{
-                    background: "#1F4E79",
+                    background: "#00646e",
                     color: "white",
                     border: "none",
                     padding: "8px 16px",
@@ -797,12 +895,13 @@ const FinanceDocument = ({
                     <button
                       onClick={applySelectedTerms}
                       style={{
-                        background: "#1F4E79",
+                        background: "linear-gradient(135deg, #00646e, #008a94)",
                         color: "#fff",
                         padding: "8px 16px",
                         border: "none",
                         borderRadius: "4px",
                         cursor: "pointer",
+                        fontWeight: "600",
                       }}
                     >
                       Apply Selected Terms
@@ -867,10 +966,11 @@ const FinanceDocument = ({
                   onClick={() => setShowPreview(false)}
                   style={{
                     padding: "8px 16px",
-                    backgroundColor: "#1F4E79",
+                    backgroundColor: "#00646e",
                     color: "white",
                     border: "none",
                     borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Close
@@ -884,12 +984,20 @@ const FinanceDocument = ({
   );
 };
 
-// ✅ MAIN COMPONENT WITH ALL STATES & FIXED PROPS
 export default function GenerateQuotation({
   quotation: initialQuotation,
   quotationNo,
   onSaved,
+  onBack,
 }) {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    }
+    navigate("/finance");
+  };
   const isEditMode =
     !!initialQuotation?.id && initialQuotation?.items?.length > 0;
   const [quotation, setQuotation] = useState(() => ({
@@ -1119,6 +1227,7 @@ const [refNo, setRefNo] = useState(quotationNo || "");
       setShowPreview={setShowPreview}
       savedQuotation={savedQuotation}
       handleSaveQuotation={handleSaveQuotation}
+      handleBack={handleBack}
       showTermsModal={showTermsModal}
       setShowTermsModal={setShowTermsModal}
       termsList={activeTermsList}

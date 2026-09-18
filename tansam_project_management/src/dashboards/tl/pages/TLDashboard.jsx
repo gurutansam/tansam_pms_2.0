@@ -1,196 +1,375 @@
 import "../CSS/TLDashboard.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiArrowUpRight,
   FiClock,
   FiCheckCircle,
   FiAlertCircle,
+  FiFolder,
+  FiActivity,
+  FiPlus,
 } from "react-icons/fi";
 
 import { fetchProjects } from "../../../services/project.api";
 import { fetchProjectFollowups } from "../../../services/projectFollowup.api";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-
-const PIE_COLORS = ["#22c55e", "#3b82f6", "#f59e0b"];
-
-/* ===== helper ===== */
+/* ===== Relative Time Helper ===== */
 const timeAgo = (date) => {
-  if (!date) return "—"; // 👈 FIX #1
-
+  if (!date) return "Recently";
   const parsed = new Date(date);
-  if (isNaN(parsed.getTime())) return "—"; // 👈 FIX #2
+  if (isNaN(parsed.getTime())) return "Recently";
 
   const diff = (Date.now() - parsed.getTime()) / 1000;
-
-  if (diff < 60) return "just now";
+  if (diff < 60) return "Just now";
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+  return parsed.toLocaleDateString("en-IN", {
+    month: "short",
+    day: "numeric",
+  });
 };
 
-
 export default function TLDashboard() {
-  const [totalProjects, setTotalProjects] = useState(0);
-  const [activeTasks, setActiveTasks] = useState(0);
-  const [completedProjects, setCompletedProjects] = useState(0);
-  const [onHoldAlerts, setOnHoldAlerts] = useState(0);
-
-  const [topProgressProjects, setTopProgressProjects] = useState([]);
-  const [recentActivities, setRecentActivities] = useState([]);
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [followups, setFollowups] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        /* ================= PROJECT COUNT ================= */
-        const projects = await fetchProjects();
-        setTotalProjects(projects?.length || 0);
-
-        /* ================= FOLLOWUPS ================= */
-        const followups = await fetchProjectFollowups();
-
-        setActiveTasks(
-          followups.filter((f) => f.status === "In Progress").length
-        );
-
-        setCompletedProjects(
-          followups.filter((f) => f.status === "Completed").length
-        );
-
-        setOnHoldAlerts(
-          followups.filter((f) => f.status === "On Hold").length
-        );
-
-        /* ================= TOP 3 BY PROGRESS ================= */
-        const top3 = [...followups]
-          .filter((f) => typeof f.progress === "number")
-          .sort((a, b) => b.progress - a.progress)
-          .slice(0, 3)
-          .map((f) => ({
-            projectName: f.projectName || `Project ${f.projectId}`,
-            progress: f.progress,
-          }));
-
-        setTopProgressProjects(top3);
-
-        /* ================= RECENT ACTIVITY ================= */
-        const recent = [...followups]
-          .sort(
-            (a, b) =>
-              new Date(b.updated_at || b.created_at) -
-              new Date(a.updated_at || a.created_at)
-          )
-          .slice(0, 5);
-
-        setRecentActivities(recent);
+        const [projData, followData] = await Promise.all([
+          fetchProjects().catch(() => []),
+          fetchProjectFollowups().catch(() => []),
+        ]);
+        setProjects(projData || []);
+        setFollowups(followData || []);
       } catch (err) {
         console.error("Dashboard data load failed", err);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
 
+  /* ================= METRICS ================= */
+  const totalProjects = projects.length;
+
+  const inProgressCount = useMemo(() => {
+    return followups.filter(
+      (f) => f.status?.toLowerCase() === "in progress"
+    ).length;
+  }, [followups]);
+
+  const completedCount = useMemo(() => {
+    return followups.filter(
+      (f) => f.status?.toLowerCase() === "completed"
+    ).length;
+  }, [followups]);
+
+  const onHoldCount = useMemo(() => {
+    return followups.filter(
+      (f) => f.status?.toLowerCase() === "on hold"
+    ).length;
+  }, [followups]);
+
+  const plannedCount = useMemo(() => {
+    return Math.max(
+      0,
+      totalProjects - (inProgressCount + completedCount + onHoldCount)
+    );
+  }, [totalProjects, inProgressCount, completedCount, onHoldCount]);
+
+  /* ================= ACTIVE PROJECTS PROGRESS ================= */
+  const activeProjects = useMemo(() => {
+    return followups
+      .filter((f) => f.status?.toLowerCase() !== "completed")
+      .sort((a, b) => (b.progress || 0) - (a.progress || 0))
+      .slice(0, 5)
+      .map((f) => ({
+        id: f.projectId || f.id,
+        projectName: f.projectName || `Project ${f.projectId}`,
+        clientName: f.clientName || "—",
+        status: f.status || "In Progress",
+        progress: Number(f.progress) || 0,
+        milestoneDueDate: f.milestoneDueDate,
+      }));
+  }, [followups]);
+
+  /* ================= RECENT ACTIVITY ================= */
+  const recentActivities = useMemo(() => {
+    return [...followups]
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt || b.createdAt || 0) -
+          new Date(a.updatedAt || a.createdAt || 0)
+      )
+      .slice(0, 6)
+      .map((f) => ({
+        id: f.followupId || f.id || f.projectId,
+        projectId: f.projectId,
+        projectName: f.projectName || `Project ${f.projectId}`,
+        clientName: f.clientName || "",
+        status: f.status || "In Progress",
+        progress: Number(f.progress) || 0,
+        updatedAt: f.updatedAt || f.createdAt,
+      }));
+  }, [followups]);
+
   return (
     <div className="tl-dashboard">
-      <h2 className="page-title">Dashboard</h2>
-
-      {/* ================= TOP METRICS ================= */}
-      <div className="stats-grid">
-        <div className="stat-card clickable">
-          <div className="card-header">
-            <span className="stat-label">Total Projects</span>
-            <FiArrowUpRight className="card-icon" />
-          </div>
-          <h3 className="stat-value">{totalProjects}</h3>
+      {/* ================= HEADER ================= */}
+      <div className="tl-dashboard-header">
+        <div>
+          <h2 className="tl-dashboard-title">Team Lead Dashboard</h2>
+          <p className="tl-dashboard-subtitle">
+            Project progress tracking, operational milestones, and recent updates.
+          </p>
         </div>
-
-        <div className="stat-card clickable">
-          <div className="card-header">
-            <span className="stat-label">Active Tasks</span>
-            <FiClock className="card-icon" />
-          </div>
-          <h3 className="stat-value">{activeTasks}</h3>
-        </div>
-
-        <div className="stat-card clickable">
-          <div className="card-header">
-            <span className="stat-label">Completed Tasks</span>
-            <FiCheckCircle className="card-icon success" />
-          </div>
-          <h3 className="stat-value">{completedProjects}</h3>
-        </div>
-
-        <div className="stat-card clickable">
-          <div className="card-header">
-            <span className="stat-label">On Hold</span>
-            <FiAlertCircle className="card-icon danger" />
-          </div>
-          <h3 className="stat-value">{onHoldAlerts}</h3>
+        <div className="tl-header-actions">
+          <button
+            className="tl-btn tl-btn-secondary"
+            onClick={() => navigate("/tl/follow-up")}
+          >
+            <FiActivity /> Project Board
+          </button>
+          <button
+            className="tl-btn tl-btn-primary"
+            onClick={() => navigate("/tl/create-project")}
+          >
+            <FiPlus /> New Project
+          </button>
         </div>
       </div>
 
-      {/* ================= BOTTOM ================= */}
-      <div className="bottom-grid">
-        {/* ===== PIE ===== */}
-        <div className="panel">
-          <h3 className="panel-title">Top Project Progress</h3>
-          <p className="panel-sub">Highest progress based on follow-ups</p>
-
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie
-                data={topProgressProjects}
-                dataKey="progress"
-                nameKey="projectName"
-                innerRadius={50}
-                outerRadius={110}
-                paddingAngle={3}
-              >
-                {topProgressProjects.map((_, i) => (
-                  <Cell
-                    key={i}
-                    fill={PIE_COLORS[i % PIE_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip formatter={(v) => `${v}%`} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+      {/* ================= STATS CARDS ================= */}
+      <div className="tl-stats-grid">
+        <div
+          className="tl-stat-card theme-total"
+          onClick={() => navigate("/tl/follow-up")}
+        >
+          <div className="tl-stat-header">
+            <span className="tl-stat-label">Total Projects</span>
+            <div className="tl-stat-icon">
+              <FiFolder />
+            </div>
+          </div>
+          <h3 className="tl-stat-value">{totalProjects}</h3>
+          <div className="tl-stat-footer">
+            <span>Managed across all teams</span>
+            <FiArrowUpRight className="tl-arrow-icon" />
+          </div>
         </div>
 
-        {/* ===== RECENT ACTIVITY (REAL DATA) ===== */}
-        <div className="panel">
-          <h3 className="panel-title">Recent Activity</h3>
-          <p className="panel-sub">Latest project updates</p>
+        <div
+          className="tl-stat-card theme-progress"
+          onClick={() => navigate("/tl/follow-up")}
+        >
+          <div className="tl-stat-header">
+            <span className="tl-stat-label">In Progress</span>
+            <div className="tl-stat-icon">
+              <FiClock />
+            </div>
+          </div>
+          <h3 className="tl-stat-value">{inProgressCount}</h3>
+          <div className="tl-stat-footer">
+            <span>Currently under active execution</span>
+            <FiArrowUpRight className="tl-arrow-icon" />
+          </div>
+        </div>
 
-          <ul className="activity-list">
-            {recentActivities.length === 0 ? (
-              <li>No recent activity</li>
+        <div
+          className="tl-stat-card theme-completed"
+          onClick={() => navigate("/tl/follow-up")}
+        >
+          <div className="tl-stat-header">
+            <span className="tl-stat-label">Completed</span>
+            <div className="tl-stat-icon">
+              <FiCheckCircle />
+            </div>
+          </div>
+          <h3 className="tl-stat-value">{completedCount}</h3>
+          <div className="tl-stat-footer">
+            <span>Successfully delivered</span>
+            <FiArrowUpRight className="tl-arrow-icon" />
+          </div>
+        </div>
+
+        <div
+          className="tl-stat-card theme-hold"
+          onClick={() => navigate("/tl/follow-up")}
+        >
+          <div className="tl-stat-header">
+            <span className="tl-stat-label">On Hold</span>
+            <div className="tl-stat-icon">
+              <FiAlertCircle />
+            </div>
+          </div>
+          <h3 className="tl-stat-value">{onHoldCount}</h3>
+          <div className="tl-stat-footer">
+            <span>Requires review or unblocking</span>
+            <FiArrowUpRight className="tl-arrow-icon" />
+          </div>
+        </div>
+      </div>
+
+      {/* ================= MAIN CONTENT GRID ================= */}
+      <div className="tl-bottom-grid">
+        {/* ===== PROJECT PROGRESS OVERVIEW ===== */}
+        <div className="tl-panel">
+          <div className="tl-panel-header">
+            <div>
+              <h3 className="tl-panel-title">Active Projects Progress</h3>
+              <p className="tl-panel-sub">
+                Current progress of ongoing projects
+              </p>
+            </div>
+            <button
+              className="tl-link-btn"
+              onClick={() => navigate("/tl/follow-up")}
+            >
+              View all
+            </button>
+          </div>
+
+          {/* Status Breakdown Bar */}
+          {totalProjects > 0 && (
+            <div className="tl-distribution-bar-wrapper">
+              <div className="tl-distribution-bar">
+                <div
+                  className="tl-dist-segment seg-progress"
+                  style={{
+                    width: `${(inProgressCount / totalProjects) * 100}%`,
+                  }}
+                  title={`In Progress: ${inProgressCount}`}
+                />
+                <div
+                  className="tl-dist-segment seg-completed"
+                  style={{
+                    width: `${(completedCount / totalProjects) * 100}%`,
+                  }}
+                  title={`Completed: ${completedCount}`}
+                />
+                <div
+                  className="tl-dist-segment seg-hold"
+                  style={{
+                    width: `${(onHoldCount / totalProjects) * 100}%`,
+                  }}
+                  title={`On Hold: ${onHoldCount}`}
+                />
+                <div
+                  className="tl-dist-segment seg-planned"
+                  style={{
+                    width: `${(plannedCount / totalProjects) * 100}%`,
+                  }}
+                  title={`Planned: ${plannedCount}`}
+                />
+              </div>
+              <div className="tl-distribution-legend">
+                <span>
+                  <span className="legend-dot seg-progress" /> In Progress ({inProgressCount})
+                </span>
+                <span>
+                  <span className="legend-dot seg-completed" /> Completed ({completedCount})
+                </span>
+                <span>
+                  <span className="legend-dot seg-hold" /> On Hold ({onHoldCount})
+                </span>
+                <span>
+                  <span className="legend-dot seg-planned" /> Planned ({plannedCount})
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Progress List */}
+          <div className="tl-progress-list">
+            {loading ? (
+              <div className="tl-empty-state">Loading projects...</div>
+            ) : activeProjects.length === 0 ? (
+              <div className="tl-empty-state">No active projects found</div>
             ) : (
-              recentActivities.map((a) => (
-                    <li key={`${a.id || "pf"}-${a.projectId}-${a.created_at || "na"}`}>
-                  <div className="avatar">
-                    {a.projectName?.charAt(0) || "P"}
-                  </div>
-                  <div>
-                    <strong>{a.projectName}</strong>
-                    <div className="activity-text">
-                      Status: {a.status} · Progress: {a.progress || 0}%
+              activeProjects.map((p) => (
+                <div key={p.id} className="tl-progress-item">
+                  <div className="tl-progress-info">
+                    <div>
+                      <h4 className="tl-project-name">{p.projectName}</h4>
+                      <span className="tl-project-client">{p.clientName}</span>
                     </div>
-                    <span>{timeAgo(a.updatedAt || a.createdAt)}</span>
-
+                    <div className="tl-progress-meta">
+                      <span
+                        className={`tl-status-badge ${p.status
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                      >
+                        {p.status}
+                      </span>
+                      <span className="tl-progress-percent">{p.progress}%</span>
+                    </div>
                   </div>
-                </li>
+                  <div className="tl-progress-track">
+                    <div
+                      className="tl-progress-fill"
+                      style={{ width: `${Math.min(100, Math.max(0, p.progress))}%` }}
+                    />
+                  </div>
+                </div>
               ))
             )}
-          </ul>
+          </div>
+        </div>
+
+        {/* ===== RECENT ACTIVITY ===== */}
+        <div className="tl-panel">
+          <div className="tl-panel-header">
+            <div>
+              <h3 className="tl-panel-title">Recent Activity</h3>
+              <p className="tl-panel-sub">Latest project updates & status changes</p>
+            </div>
+          </div>
+
+          <div className="tl-activity-feed">
+            {loading ? (
+              <div className="tl-empty-state">Loading activity...</div>
+            ) : recentActivities.length === 0 ? (
+              <div className="tl-empty-state">No recent activity</div>
+            ) : (
+              recentActivities.map((a) => (
+                <div key={`${a.id}-${a.projectId}`} className="tl-activity-card">
+                  <div className="tl-activity-content">
+                    <div className="tl-activity-top">
+                      <h4 className="tl-activity-project-name">
+                        {a.projectName}
+                      </h4>
+                      <span className="tl-activity-time">
+                        <FiClock className="time-icon" /> {timeAgo(a.updatedAt)}
+                      </span>
+                    </div>
+
+                    <div className="tl-activity-bottom">
+                      {a.clientName && (
+                        <span className="tl-activity-client">
+                          {a.clientName}
+                        </span>
+                      )}
+                      <span
+                        className={`tl-status-badge ${a.status
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                      >
+                        {a.status}
+                      </span>
+                      <span className="tl-activity-progress-tag">
+                        {a.progress}% completed
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

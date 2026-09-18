@@ -18,7 +18,7 @@
 
 /* ---------- BUTTONS ---------- */
 .primary-btn {
-  background: #15803d;
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: #fff;
   padding: 9px 16px;
   border-radius: 8px;
@@ -29,10 +29,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover {
-  background: #166534;
+  background: #004d55;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
 }
 
 .secondary-btn {

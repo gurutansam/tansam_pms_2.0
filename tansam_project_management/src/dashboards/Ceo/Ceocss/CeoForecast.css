@@ -88,12 +88,13 @@
 
 /* Save button */
 .icon-btn.save {
-  background-color: #3b82f6; /* Blue */
+  background-color: #00646e;
   color: #ffffff;
 }
 
 .icon-btn.save:hover {
-  background-color: #2563eb;
+  background-color: #004d55;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
 }
 
 /* Delete button */

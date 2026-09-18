@@ -14,6 +14,7 @@ const shutdown = async (signal) => {
 };
 
 const startServer = async () => {
+  const startTime = Date.now();
   try {
     await ensureDatabaseExists();
     const db = await connectDB();
@@ -23,7 +24,9 @@ const startServer = async () => {
       projectFollowup: true, createCeoForecastSchema: true,
     });
     app.set("db", db);
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT} (started in ${Date.now() - startTime}ms)`)
+    );
   } catch (err) {
     console.error("Server startup failed:", err);
     await closeDB();

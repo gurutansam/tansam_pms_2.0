@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 import { Editor } from "@tinymce/tinymce-react";
 import ToggleSwitch from "./toggleSwitch";
 import {
@@ -9,6 +11,7 @@ import {
 } from "../../services/quotation/terms.api";
 
 const Terms = () => {
+  const navigate = useNavigate();
   const editorRef = useRef(null);
 
   const INITIAL_CONTENT = "<p>Enter description here...</p>";
@@ -119,24 +122,54 @@ const Terms = () => {
 
   return (
     <div style={{ maxWidth: 900, margin: "20px auto" }}>
-      {/* ADD BUTTON */}
-      {!showEditor && (
-        <div style={{ textAlign: "right", marginBottom: 15 }}>
+      {/* TOP HEADER NAVIGATION */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => navigate("/finance")}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "8px 16px",
+            fontSize: "13px",
+            fontWeight: "600",
+            color: "#1e293b",
+            backgroundColor: "#ffffff",
+            border: "1px solid #cbd5e1",
+            borderRadius: "6px",
+            cursor: "pointer",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+          }}
+        >
+          <FaArrowLeft /> Back to Finance
+        </button>
+
+        {!showEditor && (
           <button
             onClick={() => setShowEditor(true)}
             style={{
               padding: "10px 18px",
               borderRadius: 6,
-              background: "#2563eb",
+              background: "linear-gradient(135deg, #00646e, #008a94)",
               color: "#fff",
               border: "none",
               cursor: "pointer",
+              fontWeight: "600",
+              boxShadow: "0 2px 8px rgba(0, 100, 110, 0.25)",
             }}
           >
             + Add Terms
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* EDITOR */}
       {showEditor && (
@@ -185,10 +218,12 @@ const Terms = () => {
                 style={{
                   marginRight: 10,
                   padding: "8px 16px",
-                  background: "#2563eb",
+                  background: isSaveEnabled ? "linear-gradient(135deg, #00646e, #008a94)" : "#94a3b8",
                   color: "#fff",
                   border: "none",
                   borderRadius: 5,
+                  fontWeight: "600",
+                  cursor: isSaveEnabled ? "pointer" : "not-allowed",
                 }}
               >
                 {currentTerm ? "Update" : "Save"}

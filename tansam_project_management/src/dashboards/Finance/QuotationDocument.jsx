@@ -1,9 +1,18 @@
 
+import { useNavigate } from "react-router-dom";
 import "../../layouts/CSS/quotationDocument.css";
+
 export default function QuotationDocument({ quotation, onBack }) {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onBack) onBack();
+    navigate("/finance");
+  };
+
   return (
     <div className="quotation-wrapper">
-      <button className="btn-back" onClick={onBack}>← Back</button>
+      <button className="btn-back" onClick={handleBack}>← Back to Finance</button>
 
       <div className="quotation-paper">
         {/* HEADER */}

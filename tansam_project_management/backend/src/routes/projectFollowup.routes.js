@@ -17,7 +17,7 @@ const router = express.Router();
 router.get(
   "/project-followups",
   authMiddleware,
-  roleMiddleware(["TEAM LEAD", "ADMIN","CEO","FINANCE"]),
+  roleMiddleware(["TEAM LEAD", "ADMIN", "CEO", "FINANCE", "MD"]),
   getProjectFollowups
 );
 

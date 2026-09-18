@@ -10,92 +10,17 @@ const ROWS_PER_PAGE = 10;
 
 export default function CeoProjects() {
   const [projects, setProjects] = useState([]);
+  const [quotations, setQuotations] = useState([]);
   const [followupStatuses, setFollowupStatuses] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [quotationsLoading, setQuotationsLoading] = useState(true);
 
   /* 🔍 FILTER STATES */
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedType, setSelectedType] = useState("");
-const [selectedLabs, setSelectedLabs] = useState([]); // ← Array for multi-select
-const [currentPage, setCurrentPage] = useState(1);
-const [quotations, setQuotations] = useState([]);
-const [_labPayments, setLabPayments] = useState({});
-const [projectPayments, setProjectPayments] = useState({});
-const [allLabPayments, setAllLabPayments] = useState({});
-const [_filteredLabPayments, setFilteredLabPayments] = useState({});
-// const totalRevenue = useMemo(() => {
-//   return quotations
-//     .filter(
-//       (q) => q.quotationStatus === "Approved" && q.paymentReceived === "Yes"
-//     )
-//     .reduce((sum, q) => sum + Number(q.paymentAmountReceived || 0), 0);
-// }, [quotations]);
-
-useEffect(() => {
-  const payments = {};
-  projects.forEach((project) => {
-    const oppId = project.opportunityId?.trim()?.toUpperCase();
-    if (!oppId) return;
-
-    const revenue = quotations
-      .filter(
-        (q) =>
-          q.opportunity_id?.trim()?.toUpperCase() === oppId &&
-          q.quotationStatus === "Approved" &&
-          q.paymentReceived === "Yes"
-      )
-      .reduce((sum, q) => sum + Number(q.paymentAmount || 0), 0);
-
-    if (!revenue) return;
-
-    const labs = Array.isArray(project.labNames)
-      ? project.labNames
-      : project.labNames ? [project.labNames] : [];
-
-    labs.forEach((lab) => {
-      const key = lab.trim();
-      payments[key] = (payments[key] || 0) + revenue;
-    });
-  });
-
-  setAllLabPayments(payments);
-}, [projects, quotations]);
-useEffect(() => {
-  if (!projects || !projectPayments) return;
-
-  if (selectedLabs.length === 0) {
-    setFilteredLabPayments(allLabPayments); // show all if no filter
-    return;
-  }
-
-  const payments = {};
-
-  projects.forEach((project) => {
-    const oppId = project.opportunityId?.trim()?.toUpperCase();
-    if (!oppId) return;
-
-    // Normalize labs
-    let projectLabNames = [];
-    if (Array.isArray(project.labNames)) projectLabNames = project.labNames;
-    else if (typeof project.labNames === "string") {
-      try {
-        const parsed = JSON.parse(project.labNames);
-        projectLabNames = Array.isArray(parsed) ? parsed : [parsed];
-      } catch {
-        projectLabNames = project.labNames.split(",").map((l) => l.trim());
-      }
-    }
-
-    projectLabNames.forEach((lab) => {
-      if (selectedLabs.includes(lab)) {
-        payments[lab] = (payments[lab] || 0) + (projectPayments[oppId] || 0);
-      }
-    });
-  });
-
-  setFilteredLabPayments(payments);
-}, [projects, projectPayments, selectedLabs, allLabPayments]);
+  const [selectedLabs, setSelectedLabs] = useState([]); // Array for multi-select
+  const [currentPage, setCurrentPage] = useState(1);
 
   /* ================= LOAD PROJECTS ================= */
   useEffect(() => {
@@ -103,171 +28,111 @@ useEffect(() => {
       try {
         const data = await fetchProjects();
         setProjects(data || []);
-      } catch {
+      } catch (err) {
+        console.error("Failed to fetch projects:", err);
         toast.error("Failed to load projects");
+      } finally {
+        setProjectsLoading(false);
       }
     })();
   }, []);
+
+  /* ================= LOAD QUOTATIONS ================= */
   useEffect(() => {
     (async () => {
       try {
         const data = await getQuotations();
         setQuotations(data || []);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch quotations:", err);
         toast.error("Failed to load quotation data");
       } finally {
-        setLoading(false);
+        setQuotationsLoading(false);
       }
     })();
   }, []);
-useEffect(() => {
-  const payments = {};
 
-  projects.forEach((project) => {
-    const oppId = project.opportunityId?.trim()?.toUpperCase();
-    if (!oppId) return;
-
-    // sum approved & received quotations for this opportunity
-    const totalRevenue = quotations
-      .filter(
-        (q) =>
-          q.opportunity_id?.trim()?.toUpperCase() === oppId &&
-          q.quotationStatus === "Approved" &&
-          q.paymentReceived === "Yes"
-      )
-      .reduce((sum, q) => sum + Number(q.paymentAmount || 0), 0);
-
-    if (!totalRevenue) return;
-
-    // get labs for project
-    const labs = Array.isArray(project.labNames)
-      ? project.labNames
-      : (project.labNames ? [project.labNames] : []);
-
-    labs.forEach((lab) => {
-      const key = lab.trim();
-      payments[key] = (payments[key] || 0) + totalRevenue;
-    });
-  });
-
-  setLabPayments(payments);
-}, [projects, quotations]);
   /* ================= LOAD FOLLOWUP STATUS ================= */
   useEffect(() => {
     if (projects.length === 0) return;
 
     const loadStatuses = async () => {
-      const statuses = {};
-      const followups = await fetchProjectFollowups();
+      try {
+        const followups = await fetchProjectFollowups();
+        const statuses = {};
 
-      projects.forEach((project) => {
-        const projectFollowups = followups.filter(
-          (f) => f.projectId === project.id
-        );
+        projects.forEach((project) => {
+          const projectFollowups = (followups || []).filter(
+            (f) => f.projectId === project.id
+          );
 
-        if (projectFollowups.length > 0) {
-          const latest = projectFollowups.sort(
-            (a, b) => new Date(b.created_at) - new Date(a.created_at)
-          )[0];
-          statuses[project.id] = latest.status;
-        } else {
-          statuses[project.id] = "Planned";
-        }
-      });
+          if (projectFollowups.length > 0) {
+            const latest = projectFollowups.sort(
+              (a, b) => new Date(b.created_at) - new Date(a.created_at)
+            )[0];
+            statuses[project.id] = latest.status;
+          } else {
+            statuses[project.id] = "Planned";
+          }
+        });
 
-      setFollowupStatuses(statuses);
-      setLoading(false);
+        setFollowupStatuses(statuses);
+      } catch (err) {
+        console.error("Failed to fetch followups:", err);
+      }
     };
 
     loadStatuses();
   }, [projects]);
-// After fetching projects and quotations
-// ---------------------------
-// Fetch quotations and map revenue per opportunity
-// ---------------------------
-useEffect(() => {
-  (async () => {
-    try {
-      const data = await getQuotations(); // fetch all quotations
-      if (!data) return;
 
-      const paymentsMap = {};
+  /* ================= QUOTATION PAYMENTS MAP ================= */
+  const { paymentsByOpp, paymentsByQuote } = useMemo(() => {
+    const oppMap = {};
+    const quoteMap = {};
 
-      data.forEach((q) => {
-        // Only consider approved and received payments
-        if (q.quotationStatus === "Approved" && q.paymentReceived === "Yes") {
-          const oppId = q.opportunity_id?.trim().toUpperCase(); // normalize key
-          const amount = Number(q.paymentAmount || 0);
+    quotations.forEach((q) => {
+      const isApproved =
+        q.quotationStatus?.toString()?.trim()?.toLowerCase() === "approved";
+      const isPaymentReceived =
+        q.paymentReceived?.toString()?.trim()?.toLowerCase() === "yes";
 
-          if (oppId) {
-            // accumulate if multiple quotations for same opportunity
-            paymentsMap[oppId] = (paymentsMap[oppId] || 0) + amount;
-          }
+      if (isApproved && isPaymentReceived) {
+        const amount = Number(q.paymentAmount || 0);
+        const oppId = q.opportunity_id?.toString()?.trim()?.toUpperCase();
+        const quoteNo = q.quotationNo?.toString()?.trim()?.toUpperCase();
 
-          console.log("Quotation:", q.quotationNo, "opportunity_id:", q.opportunity_id, "paymentAmount:", q.paymentAmount);
+        if (oppId) {
+          oppMap[oppId] = (oppMap[oppId] || 0) + amount;
         }
-      });
-
-      console.log("Payments Map:", paymentsMap);
-      setProjectPayments(paymentsMap);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load quotation payments");
-    }
-  })();
-}, []);
-
-useEffect(() => {
-  if (!projects || !projectPayments || selectedLabs.length === 0) {
-    setLabPayments({});
-    return;
-  }
-
-  let totalRevenue = 0;
-
-  projects.forEach((project) => {
-    const oppId = project.opportunityId?.trim().toUpperCase();
-    if (!oppId) return;
-
-    // Normalize labNames
-    let projectLabNames = [];
-    if (Array.isArray(project.labNames)) {
-      projectLabNames = project.labNames;
-    } else if (typeof project.labNames === "string") {
-      try {
-        const parsed = JSON.parse(project.labNames);
-        projectLabNames = Array.isArray(parsed) ? parsed : [parsed];
-      } catch {
-        projectLabNames = project.labNames.split(",").map((l) => l.trim());
+        if (quoteNo) {
+          quoteMap[quoteNo] = (quoteMap[quoteNo] || 0) + amount;
+        }
       }
+    });
+
+    return { paymentsByOpp: oppMap, paymentsByQuote: quoteMap };
+  }, [quotations]);
+
+  const getProjectRevenue = (project) => {
+    const oppId = project.opportunityId?.toString()?.trim()?.toUpperCase();
+    if (oppId && paymentsByOpp[oppId] !== undefined) {
+      return paymentsByOpp[oppId];
     }
-
-    // ✅ ADD REVENUE ONLY ONCE PER PROJECT
-    const hasSelectedLab = selectedLabs.some((lab) =>
-      projectLabNames.includes(lab)
-    );
-
-    if (hasSelectedLab) {
-      totalRevenue += projectPayments[oppId] || 0;
+    const quoteNo = project.quotationNumber?.toString()?.trim()?.toUpperCase();
+    if (quoteNo && paymentsByQuote[quoteNo] !== undefined) {
+      return paymentsByQuote[quoteNo];
     }
-  });
-
-  setLabPayments({ total: totalRevenue });
-}, [projects, projectPayments, selectedLabs]);
-
-
-
-
+    return 0;
+  };
 
   /* ================= FILTER OPTIONS ================= */
   const clientOptions = useMemo(
-    () => [...new Set(projects.map(p => p.clientName).filter(Boolean))],
+    () => [...new Set(projects.map((p) => p.clientName).filter(Boolean))],
     [projects]
   );
 
   const typeOptions = useMemo(
-    () => [...new Set(projects.map(p => p.projectType).filter(Boolean))],
+    () => [...new Set(projects.map((p) => p.projectType).filter(Boolean))],
     [projects]
   );
 
@@ -284,10 +149,12 @@ useEffect(() => {
           const parsed = JSON.parse(p.labNames);
           labArray = Array.isArray(parsed) ? parsed : [p.labNames];
         } catch {
-          labArray = [p.labNames];
+          labArray = p.labNames.split(",").map((l) => l.trim());
         }
       }
-      labArray.forEach(l => labs.add(l.trim()));
+      labArray.forEach((l) => {
+        if (l && typeof l === "string") labs.add(l.trim());
+      });
     });
     return Array.from(labs);
   }, [projects]);
@@ -308,16 +175,18 @@ useEffect(() => {
 
       const matchesLabs =
         selectedLabs.length === 0 ||
-        selectedLabs.some(lab => {
+        selectedLabs.some((lab) => {
           if (Array.isArray(p.labNames)) {
             return p.labNames.includes(lab);
           }
           if (typeof p.labNames === "string") {
             try {
               const parsed = JSON.parse(p.labNames);
-              return Array.isArray(parsed) ? parsed.includes(lab) : p.labNames === lab;
+              return Array.isArray(parsed)
+                ? parsed.includes(lab)
+                : p.labNames === lab;
             } catch {
-              return p.labNames === lab;
+              return p.labNames.split(",").map((l) => l.trim()).includes(lab);
             }
           }
           return false;
@@ -327,22 +196,23 @@ useEffect(() => {
     });
   }, [projects, searchTerm, selectedClient, selectedType, selectedLabs]);
 
+  /* ================= TOTAL REVENUE ================= */
+  const totalRevenue = useMemo(() => {
+    return filteredProjects.reduce((sum, p) => sum + getProjectRevenue(p), 0);
+  }, [filteredProjects, paymentsByOpp, paymentsByQuote]);
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedClient("");
     setSelectedType("");
-    setSelectedLabs([]); // Clear multi-select
+    setSelectedLabs([]);
     setCurrentPage(1);
   };
-{/* ================= LAB PAYMENT SUMMARY ================= */}
 
   const formatDate = (date) => {
     if (!date) return "—";
-
     const d = new Date(date);
-
-    if (isNaN(d.getTime())) return "—"; // ✅ prevents crash
-
+    if (isNaN(d.getTime())) return "—";
     return d.toISOString().split("T")[0];
   };
 
@@ -352,6 +222,8 @@ useEffect(() => {
     const start = (currentPage - 1) * ROWS_PER_PAGE;
     return filteredProjects.slice(start, start + ROWS_PER_PAGE);
   }, [filteredProjects, currentPage]);
+
+  const loading = projectsLoading || quotationsLoading;
 
   /* ================= MULTI-SELECT CHIPS COMPONENT ================= */
   function MultiSelectChips({
@@ -364,14 +236,14 @@ useEffect(() => {
 
     const toggle = (lab) => {
       if (value.includes(lab)) {
-        onChange(value.filter(v => v !== lab));
+        onChange(value.filter((v) => v !== lab));
       } else {
         onChange([...value, lab]);
       }
     };
 
     const remove = (lab) => {
-      onChange(value.filter(v => v !== lab));
+      onChange(value.filter((v) => v !== lab));
     };
 
     return (
@@ -381,13 +253,16 @@ useEffect(() => {
             <span className="placeholder">{placeholder}</span>
           ) : (
             <div className="chips">
-              {value.map(lab => (
+              {value.map((lab) => (
                 <span className="chip" key={lab}>
                   {lab}
-                  <button type="button" onClick={(e) => {
-                    e.stopPropagation();
-                    remove(lab);
-                  }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      remove(lab);
+                    }}
+                  >
                     ×
                   </button>
                 </span>
@@ -399,7 +274,7 @@ useEffect(() => {
 
         {open && (
           <div className="multi-select-dropdown">
-            {options.map(lab => (
+            {options.map((lab) => (
               <div
                 key={lab}
                 className={`option ${value.includes(lab) ? "selected" : ""}`}
@@ -445,7 +320,7 @@ useEffect(() => {
           }}
         >
           <option value="">All Clients</option>
-          {clientOptions.map(c => (
+          {clientOptions.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -460,7 +335,7 @@ useEffect(() => {
           }}
         >
           <option value="">All Project Types</option>
-          {typeOptions.map(t => (
+          {typeOptions.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
@@ -480,26 +355,14 @@ useEffect(() => {
             Clear
           </button>
         )}
-{/* ================= LAB PAYMENT SUMMARY ================= */}
-{/* ================= TOTAL REVENUE CARD ================= */}
-<div className="lab-cards">
-  <div className="lab-card total-revenue">
-    <h4>Total Revenue</h4>
-    <p>
-      ₹
-      {(selectedLabs.length > 0
-        ? _labPayments.total || 0     // ✅ your existing correct total
-        : Object.values(allLabPayments).reduce(
-            (sum, v) => sum + Number(v || 0),
-            0
-          )
-      ).toLocaleString("en-IN")}
-    </p>
-  </div>
-</div>
 
-
-
+        {/* ================= TOTAL REVENUE CARD ================= */}
+        <div className="lab-cards">
+          <div className="lab-card total-revenue">
+            <h4>Total Revenue</h4>
+            <p>₹{totalRevenue.toLocaleString("en-IN")}</p>
+          </div>
+        </div>
       </div>
 
       {/* ================= TABLE ================= */}
@@ -527,45 +390,45 @@ useEffect(() => {
               </thead>
 
               <tbody>
-                {paginatedProjects.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.projectName}</td>
-                    <td>{p.clientName}</td>
-                    <td>
-                      <span className="pill pill-client">
-                        {p.clientType || "—"}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`type-badge ${p.projectType?.toLowerCase()}`}>
-                        {p.projectType}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`status-badge ${followupStatuses[p.id]
-                          ?.toLowerCase()
-                          .replace(" ", "-")}`}
-                      >
-                        {followupStatuses[p.id] || "Planned"}
-                      </span>
-                    </td>
-                    <td>
-                      {Array.isArray(p.labNames)
-                        ? p.labNames.join(", ")
-                        : p.labNames || "—"}
-                    </td>
-                    <td>{p.workCategory || "—"}</td>
-          <td>
-  ₹{projectPayments[p.opportunityId?.trim().toUpperCase()] || "0"}
-</td>
-
-
-
-                    <td>{formatDate(p.startDate)}</td>
-                    <td>{formatDate(p.endDate)}</td>
-                  </tr>
-                ))}
+                {paginatedProjects.map((p) => {
+                  const rev = getProjectRevenue(p);
+                  return (
+                    <tr key={p.id}>
+                      <td>{p.projectName}</td>
+                      <td>{p.clientName}</td>
+                      <td>
+                        <span className="pill pill-client">
+                          {p.clientType || "—"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`type-badge ${p.projectType?.toLowerCase()}`}>
+                          {p.projectType}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${followupStatuses[p.id]
+                            ?.toLowerCase()
+                            .replace(" ", "-")}`}
+                        >
+                          {followupStatuses[p.id] || "Planned"}
+                        </span>
+                      </td>
+                      <td>
+                        {Array.isArray(p.labNames)
+                          ? p.labNames.join(", ")
+                          : p.labNames || "—"}
+                      </td>
+                      <td>{p.workCategory || "—"}</td>
+                      <td style={{ fontWeight: 600 }}>
+                        ₹{rev.toLocaleString("en-IN")}
+                      </td>
+                      <td>{formatDate(p.startDate)}</td>
+                      <td>{formatDate(p.endDate)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 

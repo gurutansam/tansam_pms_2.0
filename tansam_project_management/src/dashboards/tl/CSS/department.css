@@ -47,7 +47,7 @@
 }
 
 .dept-add-btn {
-  background: #16a34a;
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   border: none;
   padding: 12px 20px;
@@ -57,11 +57,12 @@
   align-items: center;
   gap: 8px;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .dept-add-btn:hover {
-  background: #13843d;
+  background: #004d55;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
 }
 
 /* Grid */

@@ -32,12 +32,19 @@ tbody td {
 }
 
 .btn-add-quotation {
-  background-color: #34ad38;
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   padding: 8px 16px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-add-quotation:hover {
+  background: #004d55;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
 }
 
 
@@ -662,13 +669,23 @@ CSS.finance-modal-overlay {
 }
 
 .btn-save {
-  background-color: #1F4E79;
+  background-color: #00646e;
   color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.btn-save:hover {
+  background-color: #004d55;
 }
 
 .btn-download {
-  background-color: #4CAF50;
+  background-color: #00646e;
   color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.btn-download:hover {
+  background-color: #004d55;
 }
 
 .btn-cancel {

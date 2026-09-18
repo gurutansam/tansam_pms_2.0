@@ -413,14 +413,14 @@
   font-weight: 700;
 }
 
-/* View PO Button – Big Green CTA */
+/* View PO Button – Siemens Teal CTA */
 .view-po-btn {
   margin: 0 32px 32px;
   padding: 14px;
   width: calc(100% - 64px);
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #10b981, #34d399);
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -434,7 +434,8 @@
 
 .view-po-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 100, 110, 0.3);
+  background: #004d55;
 }
 /* ================================
    PROJECT STATUS LABEL (New Addition)

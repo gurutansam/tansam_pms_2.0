@@ -59,7 +59,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: linear-gradient(135deg, #34d399, #10b981);
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   border: none;
   border-radius: 10px;
@@ -71,8 +71,8 @@
 
 .type-form button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 6px 18px rgba(0, 100, 110, 0.35);
+  background: #004d55;
 }
 
 /* LIST */

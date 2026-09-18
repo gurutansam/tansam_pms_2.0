@@ -37,7 +37,7 @@ import TeamMember from "./dashboards/tl/pages/teammember.jsx";
 // import ProjectTypes from "./tl/pages/projectTypes.jsx";
 
 /* CEO */
-// import CeoDashboard from "./dashboards/Ceo/CeoDashboard.jsx";
+import CeoDashboard from "./dashboards/Ceo/CeoDashboard.jsx";
 import CeoProjects from "./dashboards/Ceo/Ceoprojects.jsx";
 import CeoQuotation from "./dashboards/Ceo/Ceoquotation.jsx";
 import CeoForecast from "./dashboards/Ceo/CeoForecast.jsx";
@@ -46,11 +46,26 @@ import CeoDbView from "./dashboards/Ceo/CeoDbView.jsx";
 
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  });
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+    const handleStorageChange = () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        setUser(storedUser ? JSON.parse(storedUser) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const PrivateRoute = ({ children }) =>
@@ -116,21 +131,21 @@ function App() {
         </Route>
 
         {/* CEO */}
-<Route
-  path="/ceo"
-  element={
-    <PrivateRoute>
-      <DashboardLayout user={user} setUser={setUser} />
-    </PrivateRoute>
-  }
->
-    <Route index element={<CeoProjects />} />
-  {/* <Route index element={<CeoDashboard />} /> */}
-  <Route path="ceoprojects" element={<CeoProjects />} />
-  <Route path="ceoquotation" element={<CeoQuotation />} />
-  <Route path="ceoforecast" element={<CeoForecast />} />
-  <Route path="ceodbview" element={<CeoDbView />} />
-</Route>
+        <Route
+          path="/ceo"
+          element={
+            <PrivateRoute>
+              <DashboardLayout user={user} setUser={setUser} />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<CeoDashboard />} />
+          <Route path="dashboard" element={<CeoDashboard />} />
+          <Route path="ceoprojects" element={<CeoProjects />} />
+          <Route path="ceoquotation" element={<CeoQuotation />} />
+          <Route path="ceoforecast" element={<CeoForecast />} />
+          <Route path="ceodbview" element={<CeoDbView />} />
+        </Route>
 
 
         {/* TEAM LEADER */}

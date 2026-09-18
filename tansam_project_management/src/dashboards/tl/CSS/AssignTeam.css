@@ -25,7 +25,7 @@
 }
 
 .assign-add-btn {
-  background: linear-gradient(135deg, #34d399, #10b981);
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   padding: 12px 20px;
   border-radius: 12px;
@@ -36,14 +36,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 100, 110, 0.25);
   transition: all 0.3s ease;
 }
 
 .assign-add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 8px 20px rgba(0, 100, 110, 0.35);
+  background: #004d55;
 }
 
 .plus-icon {
@@ -198,7 +198,7 @@
 }
 
 .assign-save-btn {
-  background: linear-gradient(135deg, #34d399, #10b981);
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: white;
   border: none;
   padding: 10px 24px;
@@ -210,8 +210,8 @@
 
 .assign-save-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 6px 16px rgba(0, 100, 110, 0.35);
+  background: #004d55;
 }
 .assign-edit-btn {
   background: transparent;

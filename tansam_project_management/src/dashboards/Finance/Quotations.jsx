@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CSS/finance.css";
 import GenerateQuotation from "./generateQuotation";
 import {
@@ -21,6 +22,7 @@ import { fetchProjects } from "../../services/project.api.js";
 import Select from "react-select";
 
 export default function Quotations() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -553,6 +555,10 @@ const handleEdit = (quotation) => {
       <GenerateQuotation
         quotation={newQuotation}
         quotationNo={newQuotation.quotationNo}
+        onBack={() => {
+          setShowGenerateQuotation(false);
+          navigate("/finance");
+        }}
         onSaved={async () => {
           try {
             const fresh = await getQuotations();
@@ -561,6 +567,7 @@ const handleEdit = (quotation) => {
             console.error("Refresh after generate failed", err);
           }
           setShowGenerateQuotation(false);
+          navigate("/finance");
         }}
       />
     );

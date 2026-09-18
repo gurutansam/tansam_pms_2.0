@@ -101,10 +101,10 @@
 
 /* ================= BUTTONS ================= */
 .primary-btn {
-  background: #334155;
+  background: linear-gradient(135deg, #00646e, #008a94);
   color: #ffffff;
   padding: 10px 16px;
-  border-radius: 12px; /* ⬅️ curvier */
+  border-radius: 12px;
   border: none;
   font-weight: 600;
   font-size: 14px;
@@ -112,12 +112,13 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .primary-btn:hover {
-  background: #1e293b;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: #004d55;
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
+  transform: translateY(-1px);
 }
 
 .secondary-btn {

@@ -33,27 +33,35 @@
   pointer-events: none;
 }
 
-/* Centered Seamless Glass Card */
+/* Centered Translucent White Glassmorphic Card */
 .login-card-glass {
   position: relative;
   z-index: 10;
   width: 100%;
   max-width: 440px;
-  background: rgba(1, 32, 37, 0.68);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(0, 204, 204, 0.2);
-  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 26px;
   padding: 44px 40px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 45px rgba(0, 100, 110, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 2px 0 rgba(255, 255, 255, 0.15);
   box-sizing: border-box;
-  animation: fadeInCard 0.4s ease;
+  animation: fadeInCard 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeInCard {
   from {
     opacity: 0;
-    transform: scale(0.97) translateY(8px);
+    transform: scale(0.96) translateY(10px);
   }
   to {
     opacity: 1;
@@ -65,20 +73,22 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
 .logo-row img {
   height: 48px;
   width: auto;
   object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
 }
 
 .logo-row span {
   font-size: 16px;
   font-weight: 800;
   letter-spacing: .02em;
-  color: #f1f5f9;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .login-card-glass h3 {
@@ -87,13 +97,15 @@
   letter-spacing: -.02em;
   margin: 0 0 6px;
   color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .subtext {
   font-size: 14px;
   line-height: 1.5;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0 0 28px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .login-card-glass form {
@@ -112,23 +124,27 @@
   width: 100%;
   padding: 14px 44px 14px 44px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   font-size: 14px;
+  font-weight: 500;
   color: #ffffff;
   box-sizing: border-box;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
   transition: all .2s ease;
 }
 
 .input-box input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .input-box input:focus {
   outline: none;
-  border-color: #00a3a6;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 4px rgba(0, 163, 166, 0.22);
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .input-icon-left {
@@ -136,10 +152,11 @@
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #5ce1e6;
+  color: rgba(255, 255, 255, 0.92);
   font-size: 18px;
   pointer-events: none;
   z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .eye-inside {
@@ -148,14 +165,15 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #80cbc4;
+  color: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   padding: 4px;
   z-index: 2;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, opacity 0.15s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .eye-inside svg {
@@ -167,6 +185,7 @@
 
 .eye-inside:hover {
   color: #ffffff;
+  opacity: 1;
 }
 
 .login-btn-wrapper {
@@ -178,22 +197,22 @@
   width: 100%;
   padding: 14px 0;
   border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #00646e 0%, #009999 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, #00646e 0%, #008794 100%);
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0, 100, 110, 0.45);
+  box-shadow: 0 10px 25px rgba(0, 60, 70, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all .2s ease;
 }
 
 .login-card-glass button:hover {
-  background: linear-gradient(135deg, #00525a 0%, #008385 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(0, 153, 153, 0.55);
+  background: linear-gradient(135deg, #00525a 0%, #00747f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 60, 70, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .login-card-glass button:disabled {
@@ -206,7 +225,8 @@
   margin: 28px 0 0;
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 520px) {

@@ -73,7 +73,7 @@
 
 /* Action Buttons */
 .viewBtn {
-  background: #22c55e;
+  background: #00646e;
   color: #fff;
   border: none;
   padding: 4px 8px;
@@ -83,6 +83,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  transition: background 0.2s ease;
+}
+
+.viewBtn:hover {
+  background: #004d55;
 }
 
 .moreBtn {
@@ -96,6 +101,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  transition: background 0.2s ease;
+}
+
+.moreBtn:hover {
+  background: #004d55;
 }
 
 .deleteBtn {

@@ -57,7 +57,7 @@
 
 
     ceo: [
-      // { label: "Dashboard", path: "/ceo" },
+      { label: "Dashboard", path: "/ceo" },
       { label: "Projects", path: "/ceo/ceoprojects" },
       { label: "Quotation", path: "/ceo/ceoquotation" },
       { label: "Forecast", path: "/ceo/ceoforecast" },

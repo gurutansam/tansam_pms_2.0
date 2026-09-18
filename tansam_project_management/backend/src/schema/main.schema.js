@@ -29,14 +29,21 @@ const ensureSchema = async (name, createSchema) => {
  * Requests can continue calling this safely without re-running CREATE TABLE DDL.
  */
 export const initSchemas = async (db, options = {}) => {
-  if (options.admin) await ensureSchema("admin", () => createAdminSchemas(db));
-  if (options.coordinator) await ensureSchema("coordinator", () => createCoordinatorSchemas(db));
-  if (options.project) await ensureSchema("project", () => createProjectSchemas(db));
-  if (options.department) await ensureSchema("department", () => createDepartmentSchema(db));
-  if (options.member) await ensureSchema("member", () => createMemberSchema(db));
-  if (options.projectType) await ensureSchema("projectType", () => createProjectTypeSchema(db));
-  if (options.finance) await ensureSchema("finance", () => createQuotationFollowupsSchema(db));
-  if (options.projectFollowup) await ensureSchema("projectFollowup", () => createProjectFollowupSchema(db));
-  if (options.createCeoForecastSchema) await ensureSchema("ceoForecast", () => createCeoForecastSchema(db));
-  if (options.assignTeam) await ensureSchema("assignTeam", () => createAssignTeamSchema(db));
+  // Phase 1: Base schemas (no FK dependencies on each other) run in parallel
+  const phase1Tasks = [];
+  if (options.admin) phase1Tasks.push(ensureSchema("admin", () => createAdminSchemas(db)));
+  if (options.coordinator) phase1Tasks.push(ensureSchema("coordinator", () => createCoordinatorSchemas(db)));
+  if (options.project) phase1Tasks.push(ensureSchema("project", () => createProjectSchemas(db)));
+  if (options.department) phase1Tasks.push(ensureSchema("department", () => createDepartmentSchema(db)));
+  if (options.projectType) phase1Tasks.push(ensureSchema("projectType", () => createProjectTypeSchema(db)));
+  await Promise.all(phase1Tasks);
+
+  // Phase 2: Schemas with FK references to Phase 1 tables run in parallel
+  const phase2Tasks = [];
+  if (options.member) phase2Tasks.push(ensureSchema("member", () => createMemberSchema(db)));
+  if (options.finance) phase2Tasks.push(ensureSchema("finance", () => createQuotationFollowupsSchema(db)));
+  if (options.projectFollowup) phase2Tasks.push(ensureSchema("projectFollowup", () => createProjectFollowupSchema(db)));
+  if (options.createCeoForecastSchema) phase2Tasks.push(ensureSchema("ceoForecast", () => createCeoForecastSchema(db)));
+  if (options.assignTeam) phase2Tasks.push(ensureSchema("assignTeam", () => createAssignTeamSchema(db)));
+  await Promise.all(phase2Tasks);
 };

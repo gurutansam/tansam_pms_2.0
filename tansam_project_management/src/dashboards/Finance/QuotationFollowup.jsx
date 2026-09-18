@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CSS/finance.css";
-import { useEffect } from "react";
 
 import {
   getFollowups,
@@ -8,10 +8,12 @@ import {
   updateFollowup,
   deleteFollowup,
 } from "../../services/quotation/quotationFollowup.api";
-import { FaFileWord, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaFileWord, FaEdit, FaTrash, FaPlus, FaArrowLeft } from "react-icons/fa";
 import { fetchOpportunities  } from "../../services/coordinator/coordinator.opportunity.api.js";
 import { getQuotations } from "../../services/quotation/quotation.api";
+
 export default function QuotationFollowup() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -156,7 +158,29 @@ const handleSave = async () => {
     <div className="finance-container">
       {/* Header */}
       <div className="table-header">
-        <h2>Quotation Follow-up</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <button
+            type="button"
+            onClick={() => navigate("/finance")}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 16px",
+              fontSize: "13px",
+              fontWeight: "600",
+              color: "#1e293b",
+              backgroundColor: "#ffffff",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              cursor: "pointer",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            }}
+          >
+            <FaArrowLeft /> Back to Finance
+          </button>
+          <h2>Quotation Follow-up</h2>
+        </div>
     <button
   className="btn-add-quotation"
   onClick={() => {

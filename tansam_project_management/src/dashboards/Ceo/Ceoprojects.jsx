@@ -1,12 +1,108 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  FiSearch,
+  FiX,
+  FiRotateCcw,
+  FiFolder,
+  FiClock,
+  FiCheckCircle,
+  FiDollarSign,
+} from "react-icons/fi";
 import "./Ceocss/Ceoprojects.css";
 
 import { fetchProjects } from "../../services/project.api";
 import { fetchProjectFollowups } from "../../services/projectFollowup.api";
 import { getQuotations } from "../../services/quotation/quotation.api";
+
 const ROWS_PER_PAGE = 10;
+
+/* ================= MULTI-SELECT CHIPS COMPONENT ================= */
+function MultiSelectChips({
+  options,
+  value,
+  onChange,
+  placeholder = "Select labs...",
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggle = (lab) => {
+    if (value.includes(lab)) {
+      onChange(value.filter((v) => v !== lab));
+    } else {
+      onChange([...value, lab]);
+    }
+  };
+
+  const remove = (lab) => {
+    onChange(value.filter((v) => v !== lab));
+  };
+
+  return (
+    <div className="multi-select" ref={containerRef}>
+      <div
+        className={`multi-select-input ${open ? "open" : ""}`}
+        onClick={() => setOpen(!open)}
+      >
+        {value.length === 0 ? (
+          <span className="placeholder">{placeholder}</span>
+        ) : (
+          <div className="chips">
+            {value.map((lab) => (
+              <span className="chip" key={lab}>
+                {lab}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(lab);
+                  }}
+                  title="Remove"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <span className="arrow">▾</span>
+      </div>
+
+      {open && (
+        <div className="multi-select-dropdown">
+          {options.length === 0 ? (
+            <div className="option" style={{ color: "#94a3b8" }}>
+              No labs available
+            </div>
+          ) : (
+            options.map((lab) => (
+              <div
+                key={lab}
+                className={`option ${value.includes(lab) ? "selected" : ""}`}
+                onClick={() => toggle(lab)}
+              >
+                <span>{lab}</span>
+                {value.includes(lab) && <span>✓</span>}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CeoProjects() {
   const [projects, setProjects] = useState([]);
@@ -19,7 +115,7 @@ export default function CeoProjects() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const [selectedLabs, setSelectedLabs] = useState([]); // Array for multi-select
+  const [selectedLabs, setSelectedLabs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   /* ================= LOAD PROJECTS ================= */
@@ -72,7 +168,7 @@ export default function CeoProjects() {
             )[0];
             statuses[project.id] = latest.status;
           } else {
-            statuses[project.id] = "Planned";
+            statuses[project.id] = project.status || "Planned";
           }
         });
 
@@ -196,10 +292,28 @@ export default function CeoProjects() {
     });
   }, [projects, searchTerm, selectedClient, selectedType, selectedLabs]);
 
-  /* ================= TOTAL REVENUE ================= */
+  /* ================= KPI METRICS ================= */
   const totalRevenue = useMemo(() => {
     return filteredProjects.reduce((sum, p) => sum + getProjectRevenue(p), 0);
   }, [filteredProjects, paymentsByOpp, paymentsByQuote]);
+
+  const inProgressCount = useMemo(() => {
+    return filteredProjects.filter((p) => {
+      const status = (followupStatuses[p.id] || p.status || "").toLowerCase();
+      return (
+        status === "in progress" ||
+        status === "in-progress" ||
+        status === "active"
+      );
+    }).length;
+  }, [filteredProjects, followupStatuses]);
+
+  const completedCount = useMemo(() => {
+    return filteredProjects.filter((p) => {
+      const status = (followupStatuses[p.id] || p.status || "").toLowerCase();
+      return status === "completed" || status === "closed";
+    }).length;
+  }, [filteredProjects, followupStatuses]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -216,6 +330,21 @@ export default function CeoProjects() {
     return d.toISOString().split("T")[0];
   };
 
+  const parseLabsList = (labNames) => {
+    if (!labNames) return [];
+    if (Array.isArray(labNames)) return labNames;
+    if (typeof labNames === "string") {
+      try {
+        const parsed = JSON.parse(labNames);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        return labNames.split(",").map((l) => l.trim()).filter(Boolean);
+      }
+      return [labNames];
+    }
+    return [];
+  };
+
   const totalPages = Math.ceil(filteredProjects.length / ROWS_PER_PAGE);
 
   const paginatedProjects = useMemo(() => {
@@ -225,219 +354,254 @@ export default function CeoProjects() {
 
   const loading = projectsLoading || quotationsLoading;
 
-  /* ================= MULTI-SELECT CHIPS COMPONENT ================= */
-  function MultiSelectChips({
-    options,
-    value,
-    onChange,
-    placeholder = "Select labs...",
-  }) {
-    const [open, setOpen] = useState(false);
-
-    const toggle = (lab) => {
-      if (value.includes(lab)) {
-        onChange(value.filter((v) => v !== lab));
-      } else {
-        onChange([...value, lab]);
-      }
-    };
-
-    const remove = (lab) => {
-      onChange(value.filter((v) => v !== lab));
-    };
-
-    return (
-      <div className="multi-select">
-        <div className="multi-select-input" onClick={() => setOpen(!open)}>
-          {value.length === 0 ? (
-            <span className="placeholder">{placeholder}</span>
-          ) : (
-            <div className="chips">
-              {value.map((lab) => (
-                <span className="chip" key={lab}>
-                  {lab}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      remove(lab);
-                    }}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-          <span className="arrow">▾</span>
-        </div>
-
-        {open && (
-          <div className="multi-select-dropdown">
-            {options.map((lab) => (
-              <div
-                key={lab}
-                className={`option ${value.includes(lab) ? "selected" : ""}`}
-                onClick={() => toggle(lab)}
-              >
-                {lab}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
+  const hasActiveFilters = Boolean(
+    searchTerm || selectedClient || selectedType || selectedLabs.length > 0
+  );
 
   return (
-    <div className="ceo-quotations">
+    <div className="ceo-projects-page">
       <ToastContainer autoClose={1200} />
 
-      <div className="page-header">
-        <div>
+      {/* ================= PAGE HEADER ================= */}
+      <div className="ceo-page-header">
+        <div className="header-info">
+          <span className="header-badge">Executive Overview</span>
           <h2>Projects Overview</h2>
-          <p>High-level visibility of all projects</p>
+          <p>
+            High-level visibility, revenue tracking, and status breakdown across all company projects.
+          </p>
         </div>
       </div>
 
-      {/* ================= FILTER BAR ================= */}
-      <div className="filter-bar">
-        <input
-          type="text"
-          placeholder="Search project or client..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-        />
-
-        <select
-          value={selectedClient}
-          onChange={(e) => {
-            setSelectedClient(e.target.value);
-            setCurrentPage(1);
-          }}
-        >
-          <option value="">All Clients</option>
-          {clientOptions.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedType}
-          onChange={(e) => {
-            setSelectedType(e.target.value);
-            setCurrentPage(1);
-          }}
-        >
-          <option value="">All Project Types</option>
-          {typeOptions.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-
-        {/* Multi-select for Labs */}
-        <MultiSelectChips
-          options={labOptions}
-          value={selectedLabs}
-          onChange={setSelectedLabs}
-          placeholder="Select labs..."
-        />
-
-        {(searchTerm || selectedClient || selectedType || selectedLabs.length > 0) && (
-          <button className="clear-btn" onClick={clearFilters}>
-            Clear
-          </button>
-        )}
-
-        {/* ================= TOTAL REVENUE CARD ================= */}
-        <div className="lab-cards">
-          <div className="lab-card total-revenue">
-            <h4>Total Revenue</h4>
-            <p>₹{totalRevenue.toLocaleString("en-IN")}</p>
+      {/* ================= KPI METRIC CARDS ================= */}
+      <div className="ceo-kpi-grid">
+        <div className="kpi-card">
+          <div className="kpi-icon-box kpi-teal">
+            <FiFolder />
           </div>
+          <div className="kpi-content">
+            <span className="kpi-label">Total Projects</span>
+            <span className="kpi-number">{filteredProjects.length}</span>
+            <span className="kpi-subtext">Filtered count</span>
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div className="kpi-icon-box kpi-blue">
+            <FiClock />
+          </div>
+          <div className="kpi-content">
+            <span className="kpi-label">In Progress</span>
+            <span className="kpi-number">{inProgressCount}</span>
+            <span className="kpi-subtext">Active execution</span>
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div className="kpi-icon-box kpi-green">
+            <FiCheckCircle />
+          </div>
+          <div className="kpi-content">
+            <span className="kpi-label">Completed</span>
+            <span className="kpi-number">{completedCount}</span>
+            <span className="kpi-subtext">Delivered & closed</span>
+          </div>
+        </div>
+
+        <div className="kpi-card">
+          <div className="kpi-icon-box kpi-amber">
+            <FiDollarSign />
+          </div>
+          <div className="kpi-content">
+            <span className="kpi-label">Total Revenue</span>
+            <span className="kpi-number">
+              ₹{totalRevenue.toLocaleString("en-IN")}
+            </span>
+            <span className="kpi-subtext">Paid against projects</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= FILTER TOOLBAR ================= */}
+      <div className="ceo-filter-card">
+        <div className="filter-row">
+          <div className="search-input-wrapper">
+            <FiSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search project name, client..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          <select
+            className="filter-select"
+            value={selectedClient}
+            onChange={(e) => {
+              setSelectedClient(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="">All Clients</option>
+            {clientOptions.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="filter-select"
+            value={selectedType}
+            onChange={(e) => {
+              setSelectedType(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="">All Project Types</option>
+            {typeOptions.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+
+          {/* Multi-select for Labs */}
+          <MultiSelectChips
+            options={labOptions}
+            value={selectedLabs}
+            onChange={(val) => {
+              setSelectedLabs(val);
+              setCurrentPage(1);
+            }}
+            placeholder="Filter by labs..."
+          />
+
+          {hasActiveFilters && (
+            <button className="clear-btn" onClick={clearFilters} title="Reset filters">
+              <FiRotateCcw />
+              <span>Reset</span>
+            </button>
+          )}
+        </div>
+
+        <div className="filter-summary">
+          <span className="filter-count">
+            Showing <strong>{filteredProjects.length}</strong> of{" "}
+            <strong>{projects.length}</strong> projects
+          </span>
+          {hasActiveFilters && (
+            <span>Filtered results active</span>
+          )}
         </div>
       </div>
 
       {/* ================= TABLE ================= */}
       <div className="table-card">
         {loading ? (
-          <div className="loading">Loading projects...</div>
+          <div className="loading-box">
+            <div className="loading-spinner"></div>
+            <span>Loading projects data...</span>
+          </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="empty-state">No projects found</div>
+          <div className="empty-state">
+            <p>No projects found matching the filter criteria.</p>
+            {hasActiveFilters && (
+              <button
+                className="clear-btn"
+                style={{ margin: "12px auto 0" }}
+                onClick={clearFilters}
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
         ) : (
           <>
-            <table className="projects-table">
-              <thead>
-                <tr>
-                  <th>Project Name</th>
-                  <th>Client Name</th>
-                  <th>Client Type</th>
-                  <th>Project Type</th>
-                  <th>Project Status</th>
-                  <th>Labs</th>
-                  <th>Work Category</th>
-                  <th>Revenue</th>
-                  <th>Start</th>
-                  <th>End</th>
-                </tr>
-              </thead>
+            <div className="table-responsive">
+              <table className="projects-table">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Client Name</th>
+                    <th>Client Type</th>
+                    <th>Project Type</th>
+                    <th>Status</th>
+                    <th>Labs</th>
+                    <th>Work Category</th>
+                    <th>Revenue</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {paginatedProjects.map((p) => {
-                  const rev = getProjectRevenue(p);
-                  return (
-                    <tr key={p.id}>
-                      <td>{p.projectName}</td>
-                      <td>{p.clientName}</td>
-                      <td>
-                        <span className="pill pill-client">
-                          {p.clientType || "—"}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`type-badge ${p.projectType?.toLowerCase()}`}>
-                          {p.projectType}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`status-badge ${followupStatuses[p.id]
-                            ?.toLowerCase()
-                            .replace(" ", "-")}`}
-                        >
-                          {followupStatuses[p.id] || "Planned"}
-                        </span>
-                      </td>
-                      <td>
-                        {Array.isArray(p.labNames)
-                          ? p.labNames.join(", ")
-                          : p.labNames || "—"}
-                      </td>
-                      <td>{p.workCategory || "—"}</td>
-                      <td style={{ fontWeight: 600 }}>
-                        ₹{rev.toLocaleString("en-IN")}
-                      </td>
-                      <td>{formatDate(p.startDate)}</td>
-                      <td>{formatDate(p.endDate)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                <tbody>
+                  {paginatedProjects.map((p) => {
+                    const rev = getProjectRevenue(p);
+                    const statusVal =
+                      followupStatuses[p.id] || p.status || "Planned";
+                    const statusClass = statusVal
+                      .toLowerCase()
+                      .replace(/\s+/g, "-");
+                    const typeClass = (p.projectType || "")
+                      .toLowerCase()
+                      .replace(/\s+/g, "_");
+                    const labsList = parseLabsList(p.labNames);
 
-            {/* Pagination */}
+                    return (
+                      <tr key={p.id}>
+                        <td className="project-name-cell">{p.projectName}</td>
+                        <td className="client-name-cell">{p.clientName}</td>
+                        <td>
+                          <span className="pill-client">
+                            {p.clientType || "—"}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`type-badge ${typeClass}`}>
+                            {p.projectType}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`status-badge ${statusClass}`}>
+                            <span className="badge-dot"></span>
+                            <span>{statusVal}</span>
+                          </span>
+                        </td>
+                        <td>
+                          {labsList.length > 0 ? (
+                            labsList.map((lab) => (
+                              <span key={lab} className="lab-pill-item">
+                                {lab}
+                              </span>
+                            ))
+                          ) : (
+                            <span style={{ color: "#94a3b8" }}>—</span>
+                          )}
+                        </td>
+                        <td>{p.workCategory || "—"}</td>
+                        <td className="revenue-cell">
+                          ₹{rev.toLocaleString("en-IN")}
+                        </td>
+                        <td className="date-cell">{formatDate(p.startDate)}</td>
+                        <td className="date-cell">{formatDate(p.endDate)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ================= PAGINATION ================= */}
             {totalPages > 1 && (
               <div className="pagination">
                 <button
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => p - 1)}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 >
                   Prev
                 </button>
@@ -454,7 +618,7 @@ export default function CeoProjects() {
 
                 <button
                   disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => p + 1)}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 >
                   Next
                 </button>

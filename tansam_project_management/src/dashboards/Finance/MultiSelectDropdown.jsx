@@ -36,10 +36,14 @@ const MultiSelectDropdown = ({
     <div className="multi-select" ref={dropdownRef}>
       {label && <label>{label}</label>}
 
-      <div className="dropdown-header" onClick={() => setOpen(!open)}>
-        {selectedValues.length > 0
-          ? selectedValues.join(", ")
-          : placeholder}
+      <div
+        className={`dropdown-header ${open ? "is-open" : ""}`}
+        onClick={() => setOpen(!open)}
+      >
+        <span className="dropdown-header-text">
+          {selectedValues.length > 0 ? selectedValues.join(", ") : placeholder}
+        </span>
+        <span className="dropdown-arrow">▾</span>
       </div>
 
       {open && (

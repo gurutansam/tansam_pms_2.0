@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CSS/finance.css";
 import GenerateQuotation from "./generateQuotation";
@@ -7,17 +7,28 @@ import {
   addQuotation,
   updateQuotation,
   deleteQuotation,
-   generateQuotationNo,
+  generateQuotationNo,
 } from "../../services/quotation/quotation.api";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 
-import { FaFileWord, FaEdit, FaTrash, FaFilePdf } from "react-icons/fa";
+import { FaFileWord, FaEdit, FaTrash, FaFilePdf, FaMoneyCheckAlt } from "react-icons/fa";
 import { MdEditDocument } from "react-icons/md";
+import {
+  FiSearch,
+  FiX,
+  FiRotateCcw,
+  FiFileText,
+  FiDollarSign,
+  FiCheckCircle,
+  FiClock,
+  FiChevronLeft,
+  FiChevronRight,
+  FiPlus,
+} from "react-icons/fi";
 import { fetchWorkCategories } from "../../services/admin/admin.roles.api";
 import { fetchLabs } from "../../services/admin/admin.roles.api";
 import { getGeneratedQuotationByQuotationId } from "../../services/quotation/generatedQuotation.api";
 import { fetchOpportunities } from "../../services/coordinator/coordinator.opportunity.api.js";
-import { FaMoneyCheckAlt } from "react-icons/fa";
 import { fetchProjects } from "../../services/project.api.js";
 import Select from "react-select";
 
@@ -38,6 +49,7 @@ export default function Quotations() {
   const [showDoc, setShowDoc] = useState(false);
   const [_projects, setProjects] = useState([]);
   // const [selectedProject, setSelectedProject] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedClients, setSelectedClients] = useState([]);
   const [selectedWorkCategories, setSelectedWorkCategories] = useState([]);
   const [selectedLabs, setSelectedLabs] = useState([]);
@@ -87,12 +99,7 @@ export default function Quotations() {
     ],
   });
 
-  const clearAllFilters = () => {
-    setSelectedClients("");
-    setSelectedWorkCategories("");
-    setSelectedLabs("");
-    setPage(1);
-  };
+
   const handleEditGeneratedQuotation = async (originalQuotation) => {
     console.log("Edit clicked for quotation ID:", originalQuotation.id);
 
@@ -324,31 +331,96 @@ export default function Quotations() {
 
     loadOpportunities();
   }, []);
-const filtered = data.filter((q) => {
-  const clientMatch =
-    selectedClients.length === 0 ||
-    selectedClients.includes(q.clientName);
+  const computeQuotationTotal = (q) => {
+    try {
+      const items =
+        typeof q.itemDetails === "string"
+          ? JSON.parse(q.itemDetails || "[]")
+          : q.itemDetails || [];
+      return items.reduce((sum, item) => sum + Number(item.total || 0), 0);
+    } catch {
+      return 0;
+    }
+  };
 
-  const categoryMatch =
-    selectedWorkCategories.length === 0 ||
-    selectedWorkCategories.includes(q.work_category_name);
+  const kpiStats = useMemo(() => {
+    let totalValue = 0;
+    let totalReceived = 0;
+    let paymentPhaseCount = 0;
 
-  const labNames = Array.isArray(q.lab_name)
-    ? q.lab_name
-    : (() => {
-        try {
-          return JSON.parse(q.lab_name || "[]");
-        } catch {
-          return [];
-        }
-      })();
+    data.forEach((q) => {
+      totalValue += computeQuotationTotal(q);
+      totalReceived += Number(q.paymentAmount) || 0;
+      if (q.paymentPhase && q.paymentPhase !== "Not Started") {
+        paymentPhaseCount += 1;
+      }
+    });
 
-  const labMatch =
-    selectedLabs.length === 0 ||
-    selectedLabs.some((lab) => labNames.includes(lab));
+    const pendingReceivable = Math.max(0, totalValue - totalReceived);
 
-  return clientMatch && categoryMatch && labMatch;
-});
+    return {
+      totalCount: data.length,
+      totalValue,
+      totalReceived,
+      pendingReceivable,
+      paymentPhaseCount,
+    };
+  }, [data]);
+
+  const clearAllFilters = () => {
+    setSelectedClients([]);
+    setSelectedWorkCategories([]);
+    setSelectedLabs([]);
+    setSearchTerm("");
+    setPage(1);
+  };
+
+  const activeFiltersCount =
+    (searchTerm.trim() ? 1 : 0) +
+    selectedClients.length +
+    selectedWorkCategories.length +
+    selectedLabs.length;
+
+  const filtered = data.filter((q) => {
+    const query = searchTerm.trim().toLowerCase();
+    const oppName = (q.opportunity_name || "").toLowerCase();
+    const client = (q.clientName || "").toLowerCase();
+    const quoteNo = (q.quotationNo || "").toLowerCase();
+    const desc = (q.description || "").toLowerCase();
+    const workCat = (q.work_category_name || "").toLowerCase();
+
+    const matchesSearch =
+      !query ||
+      oppName.includes(query) ||
+      client.includes(query) ||
+      quoteNo.includes(query) ||
+      desc.includes(query) ||
+      workCat.includes(query);
+
+    const clientMatch =
+      selectedClients.length === 0 ||
+      selectedClients.includes(q.clientName);
+
+    const categoryMatch =
+      selectedWorkCategories.length === 0 ||
+      selectedWorkCategories.includes(q.work_category_name);
+
+    const labNames = Array.isArray(q.lab_name)
+      ? q.lab_name
+      : (() => {
+          try {
+            return JSON.parse(q.lab_name || "[]");
+          } catch {
+            return q.lab_name ? [q.lab_name] : [];
+          }
+        })();
+
+    const labMatch =
+      selectedLabs.length === 0 ||
+      selectedLabs.some((lab) => labNames.includes(lab));
+
+    return matchesSearch && clientMatch && categoryMatch && labMatch;
+  });
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -575,113 +647,224 @@ const handleEdit = (quotation) => {
 
   return (
     <div className="finance-container">
-      {/* Header */}
+      {/* Executive Header */}
       <div className="table-header">
-        <div>
+        <div className="header-info-group">
+          <span className="finance-header-badge">Finance Portal</span>
           <h2>Quotations Management</h2>
+          <p>Monitor pipeline proposals, financial valuations, and payment collections</p>
         </div>
-       <button
-  className="btn-add-quotation"
-  onClick={async () => {
-    try {
-      // ✅ call backend to generate quotation number
-      const res = await generateQuotationNo();
+        <button
+          className="btn-add-quotation"
+          onClick={async () => {
+            try {
+              // ✅ call backend to generate quotation number
+              const res = await generateQuotationNo();
 
-      setNewQuotation({
-        quotationNo: res.quotationNo, // 👈 from backend
-        opportunity_name: "",
-        clientName: "",
-        client_type_name: "",
-        work_category_name: "",
-        lab_name: "",
-        description: "",
-        gst: "",
-        value: "",
-        date: new Date().toISOString().split("T")[0],
-      });
+              setNewQuotation({
+                quotationNo: res.quotationNo, // 👈 from backend
+                opportunity_name: "",
+                clientName: "",
+                client_type_name: "",
+                work_category_name: "",
+                lab_name: "",
+                description: "",
+                gst: "",
+                value: "",
+                date: new Date().toISOString().split("T")[0],
+              });
 
-      setEditId(null);
-      setShowModal(true);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to generate quotation number");
-    }
-  }}
->
-  + Create New Quotation
-</button>
-
+              setEditId(null);
+              setShowModal(true);
+            } catch (error) {
+              console.error(error);
+              alert("Unable to generate quotation number");
+            }
+          }}
+        >
+          <FiPlus size={16} />
+          <span>Create New Quotation</span>
+        </button>
       </div>
 
-      {/* Filters */}
-      <div className="filters">
-        <MultiSelectDropdown
-          // label="Client"
-          options={clientOptions.map((c) => ({ label: c, value: c }))}
-          selectedValues={selectedClients}
-          onChange={(values) => {
-            setSelectedClients(values);
-            setPage(1);
-          }}
-          placeholder="Enter your clients"
-        />
+      {/* KPI Metric Summary Cards */}
+      <div className="finance-kpi-grid">
+        <div className="finance-kpi-card">
+          <div className="finance-kpi-icon">
+            <FiFileText />
+          </div>
+          <div className="finance-kpi-content">
+            <span className="finance-kpi-label">Total Quotations</span>
+            <h3 className="finance-kpi-number">{kpiStats.totalCount}</h3>
+            <span className="finance-kpi-subtext">Active proposals in pipeline</span>
+          </div>
+        </div>
 
-        <MultiSelectDropdown
-          // label="Work Category"
-          options={workCategoryOptions.map((w) => ({ label: w, value: w }))}
-          selectedValues={selectedWorkCategories}
-          onChange={(values) => {
-            setSelectedWorkCategories(values);
-            setPage(1);
-          }}
-          placeholder="Enter your work category"
-        />
+        <div className="finance-kpi-card highlight-teal">
+          <div className="finance-kpi-icon teal">
+            <FiDollarSign />
+          </div>
+          <div className="finance-kpi-content">
+            <span className="finance-kpi-label">Total Pipeline Value</span>
+            <h3 className="finance-kpi-number">
+              ₹ {kpiStats.totalValue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+            </h3>
+            <span className="finance-kpi-subtext">Cumulative quoted valuation</span>
+          </div>
+        </div>
 
-        <MultiSelectDropdown
-          // label="Lab"
-          options={labOptions.map((l) => ({ label: l, value: l }))}
-          selectedValues={selectedLabs}
-          onChange={(values) => {
-            setSelectedLabs(values);
-            setPage(1);
-          }}
-          placeholder="Enter Lab"
-        />
+        <div className="finance-kpi-card">
+          <div className="finance-kpi-icon green">
+            <FiCheckCircle />
+          </div>
+          <div className="finance-kpi-content">
+            <span className="finance-kpi-label">Payments Collected</span>
+            <h3 className="finance-kpi-number text-success">
+              ₹ {kpiStats.totalReceived.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+            </h3>
+            <span className="finance-kpi-subtext">Realized revenue received</span>
+          </div>
+        </div>
 
-        <button className="btn-clear-filters" onClick={clearAllFilters}>
-          ✕
-        </button>
+        <div className="finance-kpi-card">
+          <div className="finance-kpi-icon orange">
+            <FiClock />
+          </div>
+          <div className="finance-kpi-content">
+            <span className="finance-kpi-label">Pending Receivables</span>
+            <h3 className="finance-kpi-number text-warning">
+              ₹ {kpiStats.pendingReceivable.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+            </h3>
+            <span className="finance-kpi-subtext">Awaiting payment settlement</span>
+          </div>
+        </div>
+      </div>
 
-        <div className="page-size-ui">
-          <span>Show</span>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
+      {/* Segmented Navigation Tabs */}
+      <div className="finance-tabs-wrapper">
+        <div className="finance-segmented-tabs">
+          <button
+            className={`finance-tab-btn ${activeTab === "quotation" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("quotation");
               setPage(1);
             }}
           >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </select>
-          <span>per page</span>
+            <FiFileText size={16} />
+            <span>Quotation Pipeline</span>
+            <span className="tab-pill-count">{data.length}</span>
+          </button>
+          <button
+            className={`finance-tab-btn ${activeTab === "payment" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("payment");
+              setPage(1);
+            }}
+          >
+            <FiDollarSign size={16} />
+            <span>Payment Phase</span>
+            <span className="tab-pill-count">{kpiStats.paymentPhaseCount}</span>
+          </button>
         </div>
       </div>
-      <div className="tabs">
-        <button
-          className={`tab ${activeTab === "quotation" ? "active" : ""}`}
-          onClick={() => setActiveTab("quotation")}
-        >
-          Quotation
-        </button>
-        <button
-          className={`tab ${activeTab === "payment" ? "active" : ""}`}
-          onClick={() => setActiveTab("payment")}
-        >
-          Payment Phase
-        </button>
+
+      {/* Filter Toolbar Card */}
+      <div className="finance-filter-card">
+        <div className="finance-filter-top-row">
+          <div className="finance-search-box">
+            <FiSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search quotation #, opportunity, client, description..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
+            />
+            {searchTerm && (
+              <button
+                className="search-clear-btn"
+                onClick={() => {
+                  setSearchTerm("");
+                  setPage(1);
+                }}
+                title="Clear search"
+              >
+                <FiX size={14} />
+              </button>
+            )}
+          </div>
+
+          <div className="finance-dropdown-group">
+            <MultiSelectDropdown
+              options={clientOptions.map((c) => ({ label: c, value: c }))}
+              selectedValues={selectedClients}
+              onChange={(values) => {
+                setSelectedClients(values);
+                setPage(1);
+              }}
+              placeholder="Filter by Client"
+            />
+
+            <MultiSelectDropdown
+              options={workCategoryOptions.map((w) => ({ label: w, value: w }))}
+              selectedValues={selectedWorkCategories}
+              onChange={(values) => {
+                setSelectedWorkCategories(values);
+                setPage(1);
+              }}
+              placeholder="Filter by Category"
+            />
+
+            <MultiSelectDropdown
+              options={labOptions.map((l) => ({ label: l, value: l }))}
+              selectedValues={selectedLabs}
+              onChange={(values) => {
+                setSelectedLabs(values);
+                setPage(1);
+              }}
+              placeholder="Filter by Lab"
+            />
+
+            {activeFiltersCount > 0 && (
+              <button
+                className="btn-clear-filters"
+                onClick={clearAllFilters}
+                title="Reset all filters"
+              >
+                <FiRotateCcw size={13} />
+                <span>Reset ({activeFiltersCount})</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="finance-filter-bottom-row">
+          <div className="finance-results-summary">
+            Showing <strong>{filtered.length === 0 ? 0 : (page - 1) * pageSize + 1}</strong> - <strong>{Math.min(page * pageSize, filtered.length)}</strong> of <strong>{filtered.length}</strong> records
+            {activeFiltersCount > 0 && (
+              <span className="filtered-indicator"> (Filtered from {data.length} total)</span>
+            )}
+          </div>
+
+          <div className="page-size-ui">
+            <span>Show</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <span>per page</span>
+          </div>
+        </div>
       </div>
       {/* Table */}
       <div className="card-table">
@@ -780,7 +963,7 @@ const handleEdit = (quotation) => {
                           onClick={() => handleEdit(q)}
                           title="Edit"
                         >
-                          <FaEdit />
+                          <FaEdit size={14} />
                         </button>
 
                         <button
@@ -788,7 +971,7 @@ const handleEdit = (quotation) => {
                           onClick={() => deleteRow(q.id)}
                           title="Delete"
                         >
-                          <FaTrash />
+                          <FaTrash size={13} />
                         </button>
 
                         {q.isGenerated ? (
@@ -797,7 +980,7 @@ const handleEdit = (quotation) => {
                             onClick={() => handleEditGeneratedQuotation(q)}
                             title="Edit Generated Quotation"
                           >
-                            <MdEditDocument size={30} />
+                            <MdEditDocument size={16} />
                           </button>
                         ) : (
                           <button
@@ -845,15 +1028,14 @@ const handleEdit = (quotation) => {
                             }}
                             title="Generate Quotation"
                           >
-                            <FaFilePdf size={30} />
+                            <FaFilePdf size={15} />
                           </button>
                         )}
 
                         {q.quotationStatus === "Approved" && (
-                          <FaMoneyCheckAlt
-                            style={{ cursor: "pointer", color: "green" }}
-                            size={30}
-                            title="Payment"
+                          <button
+                            className="btn-payment-action"
+                            title="Payment Details"
                             onClick={async () => {
                               try {
                                 // fetch latest quotations from DB
@@ -893,7 +1075,9 @@ const handleEdit = (quotation) => {
                                 alert("Failed to load payment details");
                               }
                             }}
-                          />
+                          >
+                            <FaMoneyCheckAlt size={15} />
+                          </button>
                         )}
                       </td>
                     </>
@@ -927,31 +1111,45 @@ const handleEdit = (quotation) => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="pagination">
-        {/* Prev */}
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          ← Prev
-        </button>
+      {/* Pagination Footer */}
+      <div className="finance-pagination-footer">
+        <div className="finance-pagination-info">
+          Page <strong>{page}</strong> of <strong>{totalPages || 1}</strong>
+        </div>
 
-        {/* Page Numbers */}
-        {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map((num) => (
+        <div className="pagination">
           <button
-            key={num}
-            className={`page-btn ${page === num ? "active" : ""}`}
-            onClick={() => setPage(num)}
+            className="page-nav-btn"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            title="Previous Page"
           >
-            {num}
+            <FiChevronLeft size={16} />
+            <span>Prev</span>
           </button>
-        ))}
 
-        {/* Next */}
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage(page + 1)}
-        >
-          Next →
-        </button>
+          <div className="page-numbers-list">
+            {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                className={`page-btn ${page === num ? "active" : ""}`}
+                onClick={() => setPage(num)}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="page-nav-btn"
+            disabled={page === totalPages || totalPages === 0}
+            onClick={() => setPage(page + 1)}
+            title="Next Page"
+          >
+            <span>Next</span>
+            <FiChevronRight size={16} />
+          </button>
+        </div>
       </div>
 
       {/* ✅ IMPROVED MODAL */}

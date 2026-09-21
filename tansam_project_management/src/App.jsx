@@ -18,7 +18,6 @@ import CreateWorkCategories from "./dashboards/Admin/CreateWorkCategories.jsx";
 import CoordinatorDashboard from "./dashboards/Coordinator/CoordinatorDashboard.jsx";
 import Opportunities from "./dashboards/Coordinator/Opportunities.jsx";
 import OpportunitiesTracker from "./dashboards/Coordinator/OpportunitiesTacker.jsx";
-import CreateProjects from "./dashboards/Admin/Projects.jsx";
 import Quotations from "./dashboards/Finance/Quotations.jsx";
 import Terms from "./dashboards/Finance/terms.jsx";
 import QuotationFollowup from "./dashboards/Finance/QuotationFollowup.jsx";
@@ -88,7 +87,6 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="roles" element={<Roles />} />
-            <Route path="project" element={<CreateProject />} />
           <Route path="labs" element={<Labs />} />
           <Route path="reports" element={<Reports />} />
           <Route path="project-types" element={<CreateProjectType />} />

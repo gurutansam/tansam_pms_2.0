@@ -65,6 +65,14 @@ export default function Reports() {
         </button>
       </div>
 
+      {/* DEMO NOTICE */}
+      <div className="reports-notice-banner">
+        <span className="reports-notice-badge">Simulation Mode</span>
+        <span>
+          Reports Master is currently running on simulated in-memory data. Backend persistence and dynamic aggregations will be enabled in Phase 2.
+        </span>
+      </div>
+
       {/* TABLE */}
       <div className="table-wrapper">
         <table className="reports-table">

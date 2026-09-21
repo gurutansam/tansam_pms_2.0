@@ -1,54 +1,112 @@
 .multi-select {
   position: relative;
   width: 100%;
+  min-width: 180px;
+  font-family: inherit;
 }
 
 .dropdown-header {
-  border: 1px solid #ccc;
-  padding: 8px 10px;
+  border: 1.5px solid #e2e8f0;
+  padding: 9px 14px;
   cursor: pointer;
-  background: #fff;
-  border-radius: 4px;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.dropdown-header:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.dropdown-header.is-open {
+  background: #ffffff;
+  border-color: #00646e;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.15);
+}
+
+.dropdown-header-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-header.is-open .dropdown-arrow {
+  transform: rotate(180deg);
+  color: #00646e;
 }
 
 .dropdown-list {
   position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
   width: 100%;
-  max-height: 220px;
+  min-width: 220px;
+  max-height: 240px;
   overflow-y: auto;
-  background: #fff;
-  border: 1px solid #ccc;
-  margin-top: 4px;
-  z-index: 10;
-  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+  z-index: 50;
+  border-radius: 10px;
+  padding: 6px 0;
+  animation: dropdownFade 0.2s ease;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
-  padding: 5px 10px;
-  gap: 4px; /* minimal space between checkbox and text */
+  padding: 8px 12px;
+  gap: 8px;
   cursor: pointer;
+  font-size: 13px;
+  color: #334155;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f5f9;
+  color: #00646e;
 }
 
 .dropdown-item input[type="checkbox"] {
   margin: 0;
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-}
-
-.dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-.dropdown-item input {
-  margin: 0;      /* remove default margins */
-  flex-shrink: 0; /* prevent shrinking */
-  width: 16px;    /* fixed checkbox size */
-  height: 16px;
+  accent-color: #00646e;
+  cursor: pointer;
 }
 
 .dropdown-empty {
-  padding: 10px;
-  color: #888;
+  padding: 14px;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
 }

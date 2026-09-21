@@ -1,8 +1,319 @@
-.siemens-dashboard { min-height: 100%; padding: 38px; background: #f6f7fb; }
-.siemens-header { margin-bottom: 30px; }.siemens-main-title { color: #182136; font-size: 28px !important; font-weight: 800 !important; letter-spacing: -.045em; }.siemens-subtitle { color: #77849a; font-size: 13px !important; margin-top: 8px !important; }
-.siemens-card { height: 100%; border: 1px solid #e7eaf0; border-radius: 14px !important; background: #fff; box-shadow: 0 3px 12px rgba(24,33,54,.035); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }.siemens-card:hover { transform: translateY(-3px); border-color: #80cbc4; box-shadow: 0 16px 32px rgba(0,100,110,.12); }.siemens-card::before { display: none; }.siemens-card-content { padding: 24px !important; }
-.siemens-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }.siemens-icon { width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border-radius: 10px; background: #e0f2f1; color: #00646e; }.siemens-icon svg { font-size: 19px; }.siemens-title { color: #65728a; font-size: 13px !important; font-weight: 700 !important; letter-spacing: -.01em; }
-.siemens-total { margin: 0 !important; color: #172033; font-size: 38px !important; font-weight: 800 !important; letter-spacing: -.06em; line-height: 1.05 !important; }.siemens-total-label { margin-top: 6px !important; color: #98a2b3; font-size: 11px !important; font-weight: 600 !important; }
-.siemens-status { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 23px; padding-top: 16px; border-top: 1px solid #eef0f4; }.status-box { min-width: 0; padding: 0; border: 0; border-radius: 0; display: flex; align-items: baseline; justify-content: space-between; background: transparent; }.status-label { font-size: 11px; font-weight: 700; }.status-count { font-size: 16px; font-weight: 800; }.active-box { color: #00646e; }.inactive-box { color: #a86772; }.active-box .status-label::before, .inactive-box .status-label::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 6px 1px 0; border-radius: 50%; background: currentColor; }
-.siemens-loader { min-height: 100vh; display: grid; place-items: center; }
-@media (max-width: 768px) { .siemens-dashboard { padding: 24px 18px; } }
+/* ================================
+   ADMIN DASHBOARD STYLES
+   Consistent with CEO Dashboard
+================================ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+.admin-dashboard-container {
+  min-height: 100%;
+  padding: 32px;
+  background: #f8fafc;
+  font-family: "Inter", sans-serif;
+  color: #0f172a;
+}
+
+/* Header */
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-dashboard-title {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, #0f172a 0%, #00646e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-dashboard-subtitle {
+  color: #64748b !important;
+  font-size: 13px !important;
+  margin-top: 6px !important;
+  font-weight: 500 !important;
+}
+
+.admin-refresh-btn {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  color: #00646e !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-refresh-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  transform: rotate(15deg);
+}
+
+.admin-refresh-btn .spin {
+  animation: spin-anim 0.8s linear infinite;
+}
+
+@keyframes spin-anim {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Stat Cards */
+.admin-stat-card {
+  height: 100%;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #00646e;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #99f6e4 !important;
+  box-shadow: 0 16px 30px rgba(0, 100, 110, 0.09) !important;
+}
+
+.admin-stat-card:hover::before {
+  opacity: 1;
+}
+
+.admin-stat-content {
+  padding: 24px !important;
+}
+
+/* Header inside Card */
+.admin-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.admin-stat-title {
+  color: #64748b !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.admin-stat-icon-wrapper {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #e0f2f1;
+  color: #00646e;
+  transition: transform 0.2s ease;
+}
+
+.admin-stat-card:hover .admin-stat-icon-wrapper {
+  transform: scale(1.08);
+}
+
+.admin-stat-icon-wrapper svg {
+  font-size: 22px;
+}
+
+/* Numbers */
+.admin-stat-total {
+  margin: 0 !important;
+  color: #0f172a !important;
+  font-size: 38px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.05em;
+  line-height: 1 !important;
+}
+
+.admin-stat-label {
+  margin-top: 6px !important;
+  color: #94a3b8 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Footer / Badges */
+.admin-stat-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.admin-status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-active-badge {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #dcfce7;
+}
+
+.admin-inactive-badge {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fee2e2;
+}
+
+.admin-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.admin-active-badge .admin-badge-dot {
+  background: #22c55e;
+}
+
+.admin-inactive-badge .admin-badge-dot {
+  background: #ef4444;
+}
+
+.admin-badge-name {
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: auto;
+}
+
+.admin-badge-count {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Cards Grid */
+.admin-dashboard-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+}
+
+/* Theme Variations */
+.theme-roles .admin-stat-icon-wrapper {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+.theme-roles:hover {
+  border-color: #c7d2fe !important;
+  box-shadow: 0 16px 30px rgba(79, 70, 229, 0.09) !important;
+}
+.theme-roles::before {
+  background: #4f46e5;
+}
+
+.theme-labs .admin-stat-icon-wrapper {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.theme-labs:hover {
+  border-color: #bae6fd !important;
+  box-shadow: 0 16px 30px rgba(2, 132, 199, 0.09) !important;
+}
+.theme-labs::before {
+  background: #0284c7;
+}
+
+.theme-project-types .admin-stat-icon-wrapper {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+.theme-project-types:hover {
+  border-color: #ddd6fe !important;
+  box-shadow: 0 16px 30px rgba(124, 58, 237, 0.09) !important;
+}
+.theme-project-types::before {
+  background: #7c3aed;
+}
+
+.theme-client-types .admin-stat-icon-wrapper {
+  background: #fef3c7;
+  color: #d97706;
+}
+.theme-client-types:hover {
+  border-color: #fde68a !important;
+  box-shadow: 0 16px 30px rgba(217, 119, 6, 0.09) !important;
+}
+.theme-client-types::before {
+  background: #d97706;
+}
+
+.theme-work-categories .admin-stat-icon-wrapper {
+  background: #e0f2f1;
+  color: #00646e;
+}
+.theme-work-categories:hover {
+  border-color: #80cbc4 !important;
+  box-shadow: 0 16px 30px rgba(0, 100, 110, 0.09) !important;
+}
+.theme-work-categories::before {
+  background: #00646e;
+}
+
+.theme-users .admin-stat-icon-wrapper {
+  background: #ecfdf5;
+  color: #059669;
+}
+.theme-users:hover {
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 16px 30px rgba(5, 150, 105, 0.09) !important;
+}
+.theme-users::before {
+  background: #059669;
+}
+
+/* Loader */
+.admin-dashboard-loader {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-dashboard-container {
+    padding: 20px 16px;
+  }
+  .admin-dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

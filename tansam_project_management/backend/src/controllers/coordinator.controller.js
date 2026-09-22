@@ -182,9 +182,16 @@ export const createOpportunity = async (req, res) => {
       const placeholders = labIds.map(() => "?").join(",");
 
       const [labs] = await db.execute(
-        `SELECT id, name FROM labs_admin WHERE id IN (${placeholders})`,
+        `SELECT id, name, status FROM labs_admin WHERE id IN (${placeholders})`,
         labIds
       );
+
+      const inactiveLabs = labs.filter((l) => l.status !== "ACTIVE");
+      if (inactiveLabs.length > 0) {
+        return res.status(400).json({
+          message: `Cannot create opportunity with inactive lab(s): ${inactiveLabs.map((l) => l.name).join(", ")}`,
+        });
+      }
 
       labIdsJson = JSON.stringify(labs.map(l => Number(l.id)));
       labNamesJson = JSON.stringify(labs.map(l => l.name));
@@ -195,9 +202,14 @@ export const createOpportunity = async (req, res) => {
     let workCategoryName = null;
     if (workCategoryId) {
       const [[wc]] = await db.execute(
-        `SELECT name FROM work_categories WHERE id = ?`,
+        `SELECT name, status FROM work_categories WHERE id = ?`,
         [workCategoryId]
       );
+      if (wc && wc.status !== "ACTIVE") {
+        return res.status(400).json({
+          message: `Work category '${wc.name}' is inactive. Cannot create opportunity.`,
+        });
+      }
       workCategoryName = wc?.name || null;
     }
 
@@ -206,9 +218,14 @@ export const createOpportunity = async (req, res) => {
     let clientTypeName = null;
     if (clientTypeId) {
       const [[ct]] = await db.execute(
-        `SELECT name FROM client_types_admin WHERE id = ?`,
+        `SELECT name, status FROM client_types_admin WHERE id = ?`,
         [clientTypeId]
       );
+      if (ct && ct.status !== "ACTIVE") {
+        return res.status(400).json({
+          message: `Client type '${ct.name}' is inactive. Cannot create opportunity.`,
+        });
+      }
       clientTypeName = ct?.name || null;
     }
 
@@ -468,9 +485,16 @@ export const updateOpportunity = async (req, res) => {
         const placeholders = labIds.map(() => "?").join(",");
 
         const [labs] = await db.execute(
-          `SELECT id, name FROM labs_admin WHERE id IN (${placeholders})`,
+          `SELECT id, name, status FROM labs_admin WHERE id IN (${placeholders})`,
           labIds
         );
+
+        const inactiveLabs = labs.filter((l) => l.status !== "ACTIVE");
+        if (inactiveLabs.length > 0) {
+          return res.status(400).json({
+            message: `Cannot update opportunity with inactive lab(s): ${inactiveLabs.map((l) => l.name).join(", ")}`,
+          });
+        }
 
         finalLabIds = JSON.stringify(labs.map(l => Number(l.id)));
         finalLabNames = JSON.stringify(labs.map(l => l.name));
@@ -483,9 +507,14 @@ export const updateOpportunity = async (req, res) => {
 
     if (workCategoryId) {
       const [[wc]] = await db.execute(
-        `SELECT name FROM work_categories WHERE id = ?`,
+        `SELECT name, status FROM work_categories WHERE id = ?`,
         [workCategoryId]
       );
+      if (wc && wc.status !== "ACTIVE") {
+        return res.status(400).json({
+          message: `Work category '${wc.name}' is inactive. Cannot update opportunity.`,
+        });
+      }
       finalWorkCategoryName = wc?.name || null;
     }
 
@@ -495,9 +524,14 @@ export const updateOpportunity = async (req, res) => {
 
     if (clientTypeId) {
       const [[ct]] = await db.execute(
-        `SELECT name FROM client_types_admin WHERE id = ?`,
+        `SELECT name, status FROM client_types_admin WHERE id = ?`,
         [clientTypeId]
       );
+      if (ct && ct.status !== "ACTIVE") {
+        return res.status(400).json({
+          message: `Client type '${ct.name}' is inactive. Cannot update opportunity.`,
+        });
+      }
       finalClientTypeName = ct?.name || null;
     }
 

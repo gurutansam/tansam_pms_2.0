@@ -5,7 +5,9 @@ export const createQuotationFollowupsSchema = async (db) => {
   await db.execute(`
     CREATE TABLE IF NOT EXISTS quotation_followups (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      opprtunity_name VARCHAR(50),
+      quotation_id INT NULL,
+      project_name VARCHAR(150),
+      opportunity_name VARCHAR(150),
       quoteValue DECIMAL(10,2),
       revisedCost DECIMAL(10,2),
       status VARCHAR(50),
@@ -17,6 +19,16 @@ export const createQuotationFollowupsSchema = async (db) => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Ensure project_name column exists in existing tables
+  try {
+    const [cols] = await db.execute("SHOW COLUMNS FROM quotation_followups LIKE 'project_name'");
+    if (cols.length === 0) {
+      await db.execute("ALTER TABLE quotation_followups ADD COLUMN project_name VARCHAR(150) AFTER id");
+    }
+  } catch (e) {
+    // ignore if table doesn't support or column already added
+  }
 
   // 💬 QUOTATIONS TABLE
 await db.execute(`

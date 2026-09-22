@@ -80,17 +80,121 @@ export const createProject = async (req, res) => {
       finalProjectName ||= opp.opportunity_name;
       finalClientName ||= opp.client_name;
       oppId = opp.opportunity_id;
+
+      /* ================= OPPORTUNITY TRACKER STAGE CHECK ================= */
+      const [[tracker]] = await db.execute(
+        `SELECT stage FROM opportunity_tracker WHERE opportunity_id = ? LIMIT 1`,
+        [opportunityId]
+      );
+
+      if (!tracker) {
+        return res.status(400).json({
+          message: "Opportunity is not tracked yet in Opportunity Tracker",
+        });
+      }
+
+      if (normalizedType === "CUSTOMER") {
+        if ((tracker.stage || "").trim().toUpperCase() !== "WON") {
+          return res.status(400).json({
+            message: `Customer projects can only be created for opportunities in stage WON. Current stage is '${tracker.stage}'.`,
+          });
+        }
+      } else if (normalizedType === "CUSTOMER_POC") {
+        const allowedPocStages = [
+          "QUALIFIED",
+          "PROPOSAL_SENT",
+          "NEGOTIATION",
+          "WON",
+        ];
+        if (
+          !allowedPocStages.includes(
+            (tracker.stage || "").trim().toUpperCase()
+          )
+        ) {
+          return res.status(400).json({
+            message: `Customer POC projects require a qualified opportunity (QUALIFIED, PROPOSAL_SENT, NEGOTIATION, WON). Current stage is '${tracker.stage}'.`,
+          });
+        }
+      }
     }
 
     /* ================= CUSTOMER VALIDATION ================= */
-    if (
-      normalizedType === "CUSTOMER" &&
-      (!quotationNumber || !poNumber || !poFilePath)
-    ) {
-      return res.status(400).json({
-        message:
-          "Quotation Number, PO Number, and PO File are required for Customer projects",
-      });
+    if (normalizedType === "CUSTOMER") {
+      if (!quotationNumber || !poNumber || !poFilePath) {
+        return res.status(400).json({
+          message:
+            "Quotation Number, PO Number, and PO File are required for Customer projects",
+        });
+      }
+
+      // Enforce that an APPROVED quotation exists
+      const [[approvedQuote]] = await db.execute(
+        `
+        SELECT id, quotationNo, quotationStatus
+        FROM quotations
+        WHERE (opportunity_id = ? OR quotationNo = ?)
+          AND quotationStatus = 'Approved'
+        LIMIT 1
+        `,
+        [opportunityId, quotationNumber]
+      );
+
+      if (!approvedQuote) {
+        return res.status(400).json({
+          message:
+            "An approved quotation is required before creating a Customer project. No approved quotation found for this opportunity / quotation number.",
+        });
+      }
+    }
+
+    /* ================= MASTER DATA ACTIVE STATUS CHECK ================= */
+    if (lab_id) {
+      let ids = [];
+      try {
+        const parsed = JSON.parse(lab_id);
+        ids = Array.isArray(parsed) ? parsed : [lab_id];
+      } catch {
+        ids = String(lab_id)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      if (ids.length > 0) {
+        const placeholders = ids.map(() => "?").join(",");
+        const [inactiveLabs] = await db.execute(
+          `SELECT id, name FROM labs_admin WHERE id IN (${placeholders}) AND status != 'ACTIVE'`,
+          ids
+        );
+        if (inactiveLabs.length > 0) {
+          return res.status(400).json({
+            message: `Cannot create project with inactive lab(s): ${inactiveLabs.map((l) => l.name).join(", ")}`,
+          });
+        }
+      }
+    }
+
+    if (work_category_id) {
+      const [[inactiveWc]] = await db.execute(
+        `SELECT id, name FROM work_categories WHERE id = ? AND status != 'ACTIVE'`,
+        [work_category_id]
+      );
+      if (inactiveWc) {
+        return res.status(400).json({
+          message: `Work category '${inactiveWc.name}' is inactive. Cannot create project.`,
+        });
+      }
+    }
+
+    if (client_type_id) {
+      const [[inactiveCt]] = await db.execute(
+        `SELECT id, name FROM client_types_admin WHERE id = ? AND status != 'ACTIVE'`,
+        [client_type_id]
+      );
+      if (inactiveCt) {
+        return res.status(400).json({
+          message: `Client type '${inactiveCt.name}' is inactive. Cannot create project.`,
+        });
+      }
     }
 
     /* ================= INSERT PROJECT ================= */
@@ -137,7 +241,11 @@ export const createProject = async (req, res) => {
         endDate,
         status || "Planned",
         normalizedType === "CUSTOMER" ? quotationNumber : null,
-        normalizedType === "CUSTOMER" ? poNumber : null,
+        normalizedType === "CUSTOMER"
+          ? poNumber
+          : normalizedType === "CUSTOMER_POC"
+          ? poNumber || "POC - No PO Required"
+          : null,
         normalizedType === "CUSTOMER" ? poFilePath : null,
 
         userId, // 🔥 TEAM LEAD ID

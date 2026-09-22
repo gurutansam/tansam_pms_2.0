@@ -174,25 +174,32 @@ export const addQuotation = async (req, res) => {
       return res.status(400).json({ message: "Opportunity not selected" });
     }
 
-    // const [oppRows] = await db.execute(
-    //   `
-    //   SELECT opportunity_id, stage
-    //   FROM opportunity_tracker
-    //   WHERE opportunity_id IN (${oppIds.map(() => "?").join(",")})
-    //   `,
-    //   oppIds
-    // );
+    const [oppRows] = await db.execute(
+      `
+      SELECT opportunity_id, stage
+      FROM opportunity_tracker
+      WHERE opportunity_id IN (${oppIds.map(() => "?").join(",")})
+      `,
+      oppIds
+    );
 
-    // // ❗ If ANY opportunity is not WON → block
-    // const notWon = oppRows.find(
-    //   o => (o.stage || "").trim().toUpperCase() !== "WON"
-    // );
+    if (oppRows.length === 0) {
+      return res.status(400).json({
+        message:
+          "Opportunity is not tracked yet. Please qualify it in Opportunity Tracker before creating a quotation.",
+      });
+    }
 
-    // if (notWon) {
-    //   return res.status(403).json({
-    //     message: "Quotation can be created only when opportunity stage is WON",
-    //   });
-    // }
+    const allowedStages = ["QUALIFIED", "PROPOSAL_SENT", "NEGOTIATION", "WON"];
+    const unqualified = oppRows.find(
+      (o) => !allowedStages.includes((o.stage || "").trim().toUpperCase())
+    );
+
+    if (unqualified) {
+      return res.status(400).json({
+        message: `Quotation can only be created for qualified opportunities (QUALIFIED, PROPOSAL_SENT, NEGOTIATION, WON). Current stage is '${unqualified.stage || "UNQUALIFIED"}'.`,
+      });
+    }
 
     // --- Debug log (optional) ---
     console.log({
@@ -286,6 +293,16 @@ await db.execute(
     auditAction
   ]
 );
+
+    // Advance tracker stage from QUALIFIED to PROPOSAL_SENT
+    for (const oppRow of oppRows) {
+      if ((oppRow.stage || "").trim().toUpperCase() === "QUALIFIED") {
+        await db.execute(
+          `UPDATE opportunity_tracker SET stage = 'PROPOSAL_SENT' WHERE opportunity_id = ?`,
+          [oppRow.opportunity_id]
+        );
+      }
+    }
 
     res.status(201).json({
       id: result.insertId,
@@ -615,15 +632,21 @@ await db.execute(
     // -------------------------------------------------
     if (finalStatus === "Approved" || finalStatus === "Rejected") {
       const newStage = finalStatus === "Approved" ? "WON" : "LOST";
+      const oppIdsToUpdate = String(existing.opportunity_id || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
 
-      await db.execute(
-        `
-        UPDATE opportunity_tracker
-        SET stage = ?
-        WHERE opportunity_id = ?
-        `,
-        [newStage, existing.opportunity_id]
-      );
+      for (const singleOppId of oppIdsToUpdate) {
+        await db.execute(
+          `
+          UPDATE opportunity_tracker
+          SET stage = ?
+          WHERE opportunity_id = ?
+          `,
+          [newStage, singleOppId]
+        );
+      }
     }
 
     // -----------------------------

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import "./admincss/ProjectType.css";
-import { FiPlus, FiEdit2, FiX, FiSave } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiSave } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 
 import {
   fetchProjectTypes,
   createProjectType,
   updateProjectType,
+  deleteProjectType,
 } from "../../services/admin/admin.roles.api";
 
 export default function CreateProjectTypes() {
@@ -61,6 +62,19 @@ useEffect(() => {
     setShowModal(true);
   };
 
+  const handleDelete = async (type) => {
+    if (!window.confirm(`Are you sure you want to delete project type "${type.name}"?`)) {
+      return;
+    }
+    try {
+      await deleteProjectType(type.id);
+      toast.success("Project type deleted successfully");
+      loadProjectTypes();
+    } catch (err) {
+      toast.error(err.message || "Failed to delete project type");
+    }
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -112,9 +126,9 @@ useEffect(() => {
         <table className="project-types-table">
           <thead>
             <tr>
-              <th>Project Type</th>
-              <th>Status</th>
-              <th className="center">Action</th>
+              <th className="col-name">Project Type</th>
+              <th className="col-status">Status</th>
+              <th className="col-action center">Action</th>
             </tr>
           </thead>
 
@@ -128,8 +142,8 @@ useEffect(() => {
             ) : (
               projectTypes.map((type) => (
                 <tr key={type.id}>
-                  <td>{type.name}</td>
-                  <td>
+                  <td className="col-name">{type.name}</td>
+                  <td className="col-status">
                     <span
                       className={`status-badge ${
                         type.status === "ACTIVE" ? "active" : "inactive"
@@ -138,13 +152,23 @@ useEffect(() => {
                       {type.status}
                     </span>
                   </td>
-                  <td className="center">
-                    <button
-                      className="icon-btn edit"
-                      onClick={() => openEditModal(type)}
-                    >
-                      <FiEdit2 />
-                    </button>
+                  <td className="col-action center">
+                    <div className="action-buttons">
+                      <button
+                        className="icon-btn"
+                        onClick={() => openEditModal(type)}
+                        title="Edit Project Type"
+                      >
+                        <FiEdit />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        onClick={() => handleDelete(type)}
+                        title="Delete Project Type"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -154,57 +178,61 @@ useEffect(() => {
       </div>
 
       {/* MODAL */}
-   {/* MODAL */}
-{showModal && (
-  <div className="modal-overlay" onClick={() => setShowModal(false)}>
-    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-      <div className="modal-header">
-        <h3>{isEdit ? "Edit Project Type" : "Add Project Type"}</h3>
-        <button onClick={() => setShowModal(false)}>
-          <FiX />
-        </button>
-      </div>
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{isEdit ? "Edit Project Type" : "Add Project Type"}</h3>
+              <button
+                className="icon-btn"
+                onClick={() => setShowModal(false)}
+              >
+                <FiX />
+              </button>
+            </div>
 
-      <form onSubmit={handleSubmit}>
-        {/* Project Type Name */}
-        <div className="form-group">
-          <label>Project Type Name</label>
-          <input
-            className="form-input"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Enter project type"
-            required
-          />
-        </div>
+            <form onSubmit={handleSubmit}>
+              <label className="form-label">Project Type Name</label>
+              <input
+                className="form-input"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Enter project type"
+                required
+              />
 
-        {/* Status */}
-        <div className="form-group">
-          <label>Status</label>
-          <select
-            className="form-select"
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-          >
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="INACTIVE">INACTIVE</option>
-          </select>
-        </div>
+              {isEdit && (
+                <>
+                  <label className="form-label">Status</label>
+                  <select
+                    className="form-select"
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                  </select>
+                </>
+              )}
 
-        <div className="form-actions">
-          <button type="button" className="secondary-btn" onClick={() => setShowModal(false)}>
-            Cancel
-          </button>
-          <button type="submit" className="primary-btn">
-            <FiSave size={16} /> Save
-          </button>
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="primary-btn">
+                  <FiSave size={16} /> Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 }

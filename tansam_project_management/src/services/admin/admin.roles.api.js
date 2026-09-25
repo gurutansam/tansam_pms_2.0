@@ -1,16 +1,10 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const BASE_ADMIN_URL = `${API_BASE}/admin`;
 
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
 /* =====================================================
    ROLES
@@ -49,6 +43,17 @@ export const updateRole = async (id, payload) => {
   return data;
 };
 
+export const deleteRole = async (id) => {
+  const res = await fetch(`${BASE_ADMIN_URL}/roles/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+};
+
 /* =====================================================
    LABS
 ===================================================== */
@@ -79,6 +84,17 @@ export const updateLab = async (id, payload) => {
     method: "PUT",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+};
+
+export const deleteLab = async (id) => {
+  const res = await fetch(`${BASE_ADMIN_URL}/labs/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
   const data = await res.json();
@@ -123,6 +139,18 @@ export const updateProjectType = async (id, payload) => {
   if (!res.ok) throw new Error(data.message);
   return data;
 };
+
+// 🔹 DELETE project type
+export const deleteProjectType = async (id) => {
+  const res = await fetch(`${BASE_ADMIN_URL}/project-types/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+};
 /* =====================================================
    Work Categories
 ===================================================== */
@@ -155,6 +183,18 @@ export const updateWorkCategory = async (id, payload) => {
     method: "PUT",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+};
+
+// 🔹 DELETE work category
+export const deleteWorkCategory = async (id) => {
+  const res = await fetch(`${BASE_ADMIN_URL}/work-categories/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
   const data = await res.json();
@@ -232,6 +272,18 @@ export const updateClientType = async (id, payload) => {
     method: "PUT",
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+  return data;
+};
+
+// 🔹 DELETE client type
+export const deleteClientType = async (id) => {
+  const res = await fetch(`${BASE_ADMIN_URL}/client-types/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
   const data = await res.json();

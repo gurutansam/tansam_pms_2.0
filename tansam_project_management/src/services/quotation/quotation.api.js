@@ -1,17 +1,11 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const QUOTATIONS_URL = `${API_BASE}/quotations`;
 
 // safe headers
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
 export const getQuotations = async () => {
   const res = await fetch(QUOTATIONS_URL, { headers: getAuthHeaders() });

@@ -1,14 +1,8 @@
+import { getAuthHeaders } from "./authHeaders.js";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
-const headers = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-  };
-};
+const headers = () => getAuthHeaders(true);
 
 export const fetchProjectTypes = async () => {
   const res = await fetch(`${BASE_URL}/project-types`, { headers: headers() });

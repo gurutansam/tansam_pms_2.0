@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { Editor } from "@tinymce/tinymce-react";
 import ToggleSwitch from "./toggleSwitch";
+import "./CSS/terms.css";
 import {
   addTerms,
   getTerms,
@@ -121,33 +122,13 @@ const Terms = () => {
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: "20px auto" }}>
+    <div className="terms-container">
       {/* TOP HEADER NAVIGATION */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
+      <div className="terms-header">
         <button
           type="button"
           onClick={() => navigate("/finance")}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "8px 16px",
-            fontSize: "13px",
-            fontWeight: "600",
-            color: "#1e293b",
-            backgroundColor: "#ffffff",
-            border: "1px solid #cbd5e1",
-            borderRadius: "6px",
-            cursor: "pointer",
-            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-          }}
+          className="secondary-btn"
         >
           <FaArrowLeft /> Back to Finance
         </button>
@@ -155,16 +136,7 @@ const Terms = () => {
         {!showEditor && (
           <button
             onClick={() => setShowEditor(true)}
-            style={{
-              padding: "10px 18px",
-              borderRadius: 6,
-              background: "linear-gradient(135deg, #00646e, #008a94)",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: "600",
-              boxShadow: "0 2px 8px rgba(0, 100, 110, 0.25)",
-            }}
+            className="primary-btn"
           >
             + Add Terms
           </button>
@@ -173,22 +145,13 @@ const Terms = () => {
 
       {/* EDITOR */}
       {showEditor && (
-        <div
-          style={{
-            background: "#fff",
-            padding: 20,
-            borderRadius: 10,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            marginBottom: 30,
-          }}
-        >
+        <div className="terms-editor-card">
           <h3>{currentTerm ? "Edit Terms" : "Add Terms"}</h3>
 
           <Editor
             apiKey="gdoyqtp9jm9j8qwtbigjgmhk2kpvrufyklno8ms7ug62qw3t"
             onInit={(evt, editor) => (editorRef.current = editor)}
-         value={content}   // ✅ controlled editor
-
+            value={content}
             onEditorChange={setContent}
             init={{
               height: 260,
@@ -198,44 +161,24 @@ const Terms = () => {
             }}
           />
 
-          <div
-            style={{
-              marginTop: 15,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div className="terms-actions-bar">
             <ToggleSwitch
               isOn={isActive}
               onToggle={() => setIsActive((prev) => !prev)}
             />
 
-            <div>
+            <div style={{ display: "flex", gap: "10px" }}>
               <button
                 onClick={handleSave}
                 disabled={!isSaveEnabled}
-                style={{
-                  marginRight: 10,
-                  padding: "8px 16px",
-                  background: isSaveEnabled ? "linear-gradient(135deg, #00646e, #008a94)" : "#94a3b8",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 5,
-                  fontWeight: "600",
-                  cursor: isSaveEnabled ? "pointer" : "not-allowed",
-                }}
+                className="primary-btn"
               >
                 {currentTerm ? "Update" : "Save"}
               </button>
 
               <button
                 onClick={handleCancel}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: 5,
-                  border: "1px solid #ccc",
-                }}
+                className="secondary-btn"
               >
                 Cancel
               </button>
@@ -245,79 +188,65 @@ const Terms = () => {
       )}
 
       {/* TABLE */}
-      <h3>Existing Terms</h3>
+      <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#0f172a", marginBottom: "16px" }}>Existing Terms</h3>
 
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          background: "#fff",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-          borderRadius: 8,
-          overflow: "hidden",
-          tableLayout: "auto", // ✅ IMPORTANT FIX
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={thStyle}>Term Preview</th>
-            <th style={thStyle}>Status</th>
-            <th style={thStyle}>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {termsList.length === 0 ? (
+      <div className="terms-table-card">
+        <table className="terms-table">
+          <thead>
             <tr>
-              <td colSpan="3" style={{ padding: 15, textAlign: "center" }}>
-                No terms available
-              </td>
+              <th>Term Preview</th>
+              <th>Status</th>
+              <th style={{ textAlign: "right" }}>Actions</th>
             </tr>
-          ) : (
-            termsList.map((term) => (
-              <tr key={term.id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                <td style={tdStyle}>
-                  {term.content
-                    .replace(/<[^>]*>/g, "")
-                    .slice(0, 150)}
-                  …
-                </td>
+          </thead>
 
-                <td style={tdStyle}>
-                  <span
-                    style={{
-                      padding: "4px 10px",
-                      borderRadius: 12,
-                      fontSize: 12,
-                      background:
-                        term.status === "Active" ? "#dcfce7" : "#fee2e2",
-                      color:
-                        term.status === "Active" ? "#166534" : "#991b1b",
-                    }}
-                  >
-                    {term.status}
-                  </span>
-                </td>
-
-                <td style={tdStyle}>
-                  <button
-                    onClick={() => handleEdit(term)}
-                    style={{ marginRight: 10 }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(term.id)}
-                    style={{ color: "red" }}
-                  >
-                    Delete
-                  </button>
+          <tbody>
+            {termsList.length === 0 ? (
+              <tr>
+                <td colSpan="3" style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
+                  No terms available
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              termsList.map((term) => (
+                <tr key={term.id}>
+                  <td>
+                    {term.content
+                      .replace(/<[^>]*>/g, "")
+                      .slice(0, 150)}
+                    …
+                  </td>
+
+                  <td>
+                    <span
+                      className={`term-status-badge ${term.status === "Active" ? "active" : "inactive"}`}
+                    >
+                      {term.status}
+                    </span>
+                  </td>
+
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      onClick={() => handleEdit(term)}
+                      className="secondary-btn"
+                      style={{ marginRight: "8px", padding: "6px 12px", fontSize: "12px" }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(term.id)}
+                      className="reset-btn"
+                      style={{ padding: "6px 12px", fontSize: "12px" }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

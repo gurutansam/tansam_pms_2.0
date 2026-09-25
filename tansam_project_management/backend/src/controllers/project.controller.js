@@ -5,9 +5,9 @@ import { connectDB } from "../config/db.js";
 export const createProject = async (req, res) => {
   try {
     const db = await connectDB();
-    // 🔐 USER INFO FROM HEADERS
-    const userId = req.headers["x-user-id"];
-    const role = req.headers["x-user-role"];
+    // 🔐 USER INFO (From JWT auth middleware or fallback headers)
+    const userId = req.user?.id || req.headers["x-user-id"];
+    const role = req.user?.role || req.headers["x-user-role"];
 
     const {
       projectType,
@@ -280,8 +280,8 @@ export const getProjects = async (req, res) => {
   try {
     const db = await connectDB();
 
-    const userId = req.headers["x-user-id"];
-    const role = req.headers["x-user-role"];
+    const userId = req.user?.id || req.headers["x-user-id"];
+    const role = req.user?.role || req.headers["x-user-role"];
 
     let query = `
       SELECT

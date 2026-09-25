@@ -15,12 +15,11 @@
 }
 
 .page-header h2 {
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   margin: 0;
-  background: linear-gradient(90deg, #10b981, #34d399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 /* FORM CARD */

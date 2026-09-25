@@ -1,19 +1,9 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "./authHeaders.js";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/* 🔐 AUTH HEADERS (same as coordinator/admin) */
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user) {
-    throw new Error("User not logged in");
-  }
-
-  return {
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+/* 🔐 AUTH HEADERS */
+const getAuthHeaders = () => getBaseAuthHeaders();
 
 /* ============================
    CREATE PROJECT

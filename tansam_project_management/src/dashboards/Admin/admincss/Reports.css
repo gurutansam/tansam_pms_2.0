@@ -1,19 +1,52 @@
+/* ==========================================================================
+   REPORTS MASTER CSS (MATCHING LABS TEMPLATE)
+   ========================================================================== */
+
 /* ---------- LAYOUT ---------- */
 .reports-container {
   padding: 24px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .reports-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .reports-title {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
+  margin: 0;
+}
+
+/* ---------- DEMO NOTICE ---------- */
+.reports-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+.reports-notice-badge {
+  background: #2563eb;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ---------- BUTTONS ---------- */
@@ -44,26 +77,40 @@
   padding: 9px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-/* ---------- ICON BUTTON ---------- */
+.secondary-btn:hover {
+  background: #e2e8f0;
+}
+
+/* ================= ICON BUTTON ================= */
+.action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .icon-btn {
   background: transparent;
   border: none;
   cursor: pointer;
+  font-size: 16px;
+  color: #334155;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.icon-btn.edit svg {
-  color: #ea580c;
-}
-
-.icon-btn.edit:hover {
-  background: #ffedd5;
+.icon-btn:hover {
+  background: #e5e7eb;
+  color: #0f172a;
 }
 
 /* ---------- TABLE ---------- */
@@ -72,6 +119,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
   overflow: hidden;
+  border: 1px solid #e2e8f0;
 }
 
 .reports-table {
@@ -80,7 +128,6 @@
   table-layout: fixed;
 }
 
-/* Column widths */
 .col-name {
   width: 55%;
 }
@@ -93,7 +140,6 @@
   width: 20%;
 }
 
-/* Header */
 .reports-table th {
   padding: 16px;
   font-size: 13px;
@@ -103,17 +149,24 @@
   color: #0f172a;
   text-align: left;
   border-bottom: 2px solid #e5e7eb;
+  letter-spacing: 0.5px;
 }
 
-/* Body */
 .reports-table td {
   padding: 14px 16px;
   border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
+  font-size: 14px;
+  color: #334155;
 }
 
 .reports-table tbody tr:hover {
   background: #f8fafc;
+}
+
+.reports-table th.col-action,
+.reports-table td.col-action {
+  text-align: center;
+  vertical-align: middle;
 }
 
 .center {
@@ -122,8 +175,9 @@
 
 .empty-text {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
   color: #64748b;
+  font-size: 14px;
 }
 
 /* ---------- STATUS ---------- */
@@ -132,6 +186,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-block;
 }
 
 .status-badge.active {
@@ -144,26 +199,15 @@
   color: #991b1b;
 }
 
-/* ---------- ACTION COLUMN ALIGNMENT FIX ---------- */
-.reports-table th.col-action,
-.reports-table td.col-action {
-  text-align: center;
-  vertical-align: middle;
-}
-
-.reports-table td.col-action .icon-btn {
-  width: 32px;
-  height: 32px;
-}
-
 /* ---------- MODAL ---------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.45);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .modal-box {
@@ -171,60 +215,58 @@
   width: 420px;
   border-radius: 12px;
   padding: 20px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 /* ---------- FORM ---------- */
 .form-label {
+  display: block;
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 4px;
-  display: block;
+  margin-bottom: 6px;
+  color: #334155;
 }
 
 .form-input,
 .form-select {
   width: 100%;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #cbd5e1;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #0f172a;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #00646e;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.12);
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 8px;
 }
-
-/* ---------- DEMO NOTICE BANNER ---------- */
-.reports-notice-banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
-  border-left: 4px solid #f59e0b;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  font-size: 13px;
-  color: #92400e;
-}
-
-.reports-notice-badge {
-  background: #fef3c7;
-  color: #b45309;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}

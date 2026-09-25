@@ -3,8 +3,9 @@ import {
   fetchRoles,
   createRole,
   updateRole,
+  deleteRole,
 } from "./../../services/admin/admin.roles.api";
-import { FiPlus, FiEdit, FiX, FiSave } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiSave } from "react-icons/fi";
 import "./admincss/Roles.css";
 
 export default function Roles() {
@@ -44,6 +45,19 @@ export default function Roles() {
     setShowModal(true);
   };
 
+  const handleDelete = async (role) => {
+    if (!window.confirm(`Are you sure you want to delete role "${role.name}"?`)) {
+      return;
+    }
+
+    try {
+      await deleteRole(role.id);
+      loadRoles();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -77,50 +91,66 @@ export default function Roles() {
     <div className="roles-container">
       {/* HEADER */}
       <div className="roles-header">
-        <h2>ROLES MASTER</h2>
+        <h2 className="roles-title">Roles Master</h2>
         <button className="primary-btn" onClick={openAddModal}>
-          <FiPlus /> Add Role
+          <FiPlus size={16} /> Add Role
         </button>
       </div>
 
       {/* TABLE */}
-      <table className="roles-table">
-        <thead>
-          <tr>
-            <th>Role Name</th>
-            <th>Status</th>
-            <th style={{ textAlign: "center" }}>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {roles.map((role) => (
-            <tr key={role.id}>
-              <td>{role.name}</td>
-              <td>
-                <span className={`status ${role.status.toLowerCase()}`}>
-                  {role.status}
-                </span>
-              </td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  className="icon-btn"
-                  onClick={() => openEditModal(role)}
-                >
-                  <FiEdit />
-                </button>
-              </td>
-            </tr>
-          ))}
-
-          {roles.length === 0 && (
+      <div className="table-wrapper">
+        <table className="roles-table">
+          <thead>
             <tr>
-              <td colSpan="3" className="empty">
-                No roles found
-              </td>
+              <th className="col-name">Role Name</th>
+              <th className="col-status">Status</th>
+              <th className="col-action center">Action</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {roles.map((role) => (
+              <tr key={role.id}>
+                <td className="col-name">{role.name}</td>
+                <td className="col-status">
+                  <span
+                    className={`status-badge ${
+                      role.status === "ACTIVE" ? "active" : "inactive"
+                    }`}
+                  >
+                    {role.status}
+                  </span>
+                </td>
+                <td className="col-action center">
+                  <div className="action-buttons">
+                    <button
+                      className="icon-btn"
+                      onClick={() => openEditModal(role)}
+                      title="Edit Role"
+                    >
+                      <FiEdit />
+                    </button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => handleDelete(role)}
+                      title="Delete Role"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+
+            {roles.length === 0 && (
+              <tr>
+                <td colSpan="3" className="empty-text">
+                  No roles found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* MODAL */}
       {showModal && (
@@ -136,27 +166,33 @@ export default function Roles() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="modal-body">
+            <form onSubmit={handleSubmit}>
+              <label className="form-label">Role Name</label>
               <input
                 type="text"
                 name="name"
-                placeholder="Role Name"
+                placeholder="Enter role name"
                 value={form.name}
                 onChange={handleChange}
+                className="form-input"
               />
 
               {isEdit && (
-                <select
-                  name="status"
-                  value={form.status}
-                  onChange={handleChange}
-                >
-                  <option value="ACTIVE">ACTIVE</option>
-                  <option value="INACTIVE">INACTIVE</option>
-                </select>
+                <>
+                  <label className="form-label">Status</label>
+                  <select
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                    className="form-select"
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                  </select>
+                </>
               )}
 
-              <div className="modal-actions">
+              <div className="form-actions">
                 <button
                   type="button"
                   className="secondary-btn"
@@ -165,7 +201,7 @@ export default function Roles() {
                   Cancel
                 </button>
                 <button type="submit" className="primary-btn">
-                  <FiSave /> Save
+                  <FiSave size={16} /> Save
                 </button>
               </div>
             </form>

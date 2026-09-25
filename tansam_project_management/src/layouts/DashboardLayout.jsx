@@ -7,6 +7,7 @@ export default function DashboardLayout({ user, setUser }) {
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     navigate("/", { replace: true });
   };

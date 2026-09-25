@@ -23,13 +23,11 @@
 }
 
 .admin-dashboard-title {
-  font-size: 26px !important;
+  font-size: 28px !important;
   font-weight: 800 !important;
-  color: #0f172a;
-  letter-spacing: -0.03em;
-  background: linear-gradient(120deg, #0f172a 0%, #00646e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0f172a !important;
+  letter-spacing: -0.02em !important;
+  margin: 0;
 }
 
 .admin-dashboard-subtitle {

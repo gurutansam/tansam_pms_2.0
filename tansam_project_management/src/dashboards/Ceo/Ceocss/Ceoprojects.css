@@ -238,7 +238,7 @@
 }
 
 /* ================= MULTI-SELECT CHIPS ================= */
-.multi-select {
+.filter-row .multi-select {
   position: relative;
   min-width: 220px;
   flex: 1 1 200px;
@@ -488,6 +488,7 @@
   color: #475569;
   border: 1px solid #e2e8f0;
 }
+
 .status-badge.planned .badge-dot {
   background: #94a3b8;
 }
@@ -497,6 +498,7 @@
   color: #1d4ed8;
   border: 1px solid #dbeafe;
 }
+
 .status-badge.in-progress .badge-dot {
   background: #3b82f6;
 }
@@ -506,6 +508,7 @@
   color: #166534;
   border: 1px solid #bbf7d0;
 }
+
 .status-badge.completed .badge-dot {
   background: #22c55e;
 }
@@ -515,6 +518,7 @@
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+
 .status-badge.on-hold .badge-dot {
   background: #ef4444;
 }
@@ -648,14 +652,17 @@
   .ceo-projects-page {
     padding: 20px 16px;
   }
+
   .ceo-page-header {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .filter-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .filter-select,
   .multi-select {
     width: 100%;

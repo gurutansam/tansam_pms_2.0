@@ -14,9 +14,10 @@
 ============================ */
 
 .tracker-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #16a34a;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
   margin-bottom: 18px;
 }
 

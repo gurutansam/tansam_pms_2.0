@@ -39,6 +39,9 @@ function Login({ setUser }) {
     try {
       const data = await loginUser(email, password);
       setUser(data);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
       localStorage.setItem("user", JSON.stringify(data));
       navigate(data.route);
     } catch (err) {

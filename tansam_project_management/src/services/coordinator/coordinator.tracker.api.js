@@ -1,15 +1,9 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const BASE_COORDINATOR_URL = `${API_BASE}/coordinator`;
 
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
 /* ============================
    OPPORTUNITY TRACKER

@@ -1,137 +1,75 @@
+/* ==========================================================================
+   ROLES MASTER CSS (MATCHING LABS TEMPLATE)
+   ========================================================================== */
+
+/* ---------- LAYOUT ---------- */
 .roles-container {
-  padding: 32px;
+  padding: 24px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f8fafc;
   min-height: 100vh;
-  color: #1e293b;
+  box-sizing: border-box;
 }
 
-/* ================= PAGE HEADER ================= */
 .roles-header {
-  margin-bottom: 32px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.roles-header h2 {
-  font-size: 26px;
+.roles-title {
+  font-size: 22px;
   font-weight: 700;
-  margin: 0;
   color: #0f172a;
+  margin: 0;
 }
 
-.page-sub {
-  font-size: 15px;
-  color: #64748b;
-  margin-top: 4px;
-}
-
-/* ================= TABLE CARD ================= */
-.table-card {
-  background: #ffffff;
-  border-radius: 18px; /* ⬅️ curvier */
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  transition: border-radius 0.2s ease;
-}
-
-/* ================= TABLE ================= */
-.roles-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 18px;
-  overflow: hidden; /* IMPORTANT for rounded corners */
-}
-
-.roles-table thead {
-  background: #f1f5f9;
-}
-
-.roles-table th {
-  padding: 14px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-  text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.roles-table td {
-  padding: 16px 18px;
-  font-size: 14px;
-  color: #334155;
-}
-
-.roles-table tbody tr {
-  border-top: 1px solid #e2e8f0;
-}
-
-.roles-table tbody tr:hover {
-  background: #f8fafc;
-}
-
-.empty {
-  text-align: center;
-  padding: 28px;
-  color: #94a3b8;
-  font-style: italic;
-}
-
-/* ================= STATUS ================= */
-.status {
-  padding: 6px 12px;
-  border-radius: 999px; /* ⬅️ pill */
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status.active {
-  background: #e7f5ee;
-  color: #166534;
-}
-
-.status.inactive {
-  background: #fef2f2;
-  color: #991b1b;
-}
-
-/* ================= BUTTONS ================= */
+/* ---------- BUTTONS ---------- */
 .primary-btn {
   background: linear-gradient(135deg, #00646e, #008a94);
-  color: #ffffff;
-  padding: 10px 16px;
-  border-radius: 12px;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 8px;
   border: none;
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover {
   background: #004d55;
   box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
-  transform: translateY(-1px);
 }
 
 .secondary-btn {
-  background: #e5e7eb;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   color: #0f172a;
-  padding: 10px 16px;
-  border-radius: 12px; /* ⬅️ curvier */
-  border: none;
-  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #e2e8f0;
 }
 
 /* ================= ICON BUTTON ================= */
+.action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .icon-btn {
   background: transparent;
   border: none;
@@ -139,18 +77,109 @@
   font-size: 16px;
   color: #334155;
   padding: 6px;
-  border-radius: 10px; /* ⬅️ softer */
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
   background: #e5e7eb;
+  color: #0f172a;
 }
 
-/* ================= MODAL ================= */
+/* ---------- TABLE ---------- */
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.col-name {
+  width: 55%;
+}
+
+.col-status {
+  width: 25%;
+}
+
+.col-action {
+  width: 20%;
+}
+
+.roles-table th {
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f1f5f9;
+  text-transform: uppercase;
+  color: #0f172a;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+  letter-spacing: 0.5px;
+}
+
+.roles-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #334155;
+}
+
+.roles-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.roles-table th.col-action,
+.roles-table td.col-action {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.center {
+  text-align: center;
+}
+
+.empty-text {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ---------- STATUS ---------- */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ---------- MODAL ---------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,17 +189,19 @@
 .modal-box {
   background: #ffffff;
   width: 420px;
-  border-radius: 20px; /* ⬅️ premium curve */
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-  transition: border-radius 0.2s ease;
+  box-sizing: border-box;
 }
 
 .modal-header {
-  padding: 16px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-header h3 {
@@ -180,36 +211,38 @@
   color: #0f172a;
 }
 
-.modal-body {
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ---------- FORM ---------- */
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #334155;
 }
 
-.modal-body input,
-.modal-body select {
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px; /* ⬅️ softer fields */
-  font-size: 14px;
-}
-
-.modal-body input:focus,
-.modal-body select:focus {
-  outline: none;
-  border-color: #64748b;
-  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2);
-}
-
-/* ================= MODAL ACTIONS ================= */
-.modal-actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.modal-actions button {
+.form-input,
+.form-select {
   width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #0f172a;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #00646e;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.12);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
 }

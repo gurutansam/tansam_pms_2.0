@@ -14,9 +14,10 @@
 ============================ */
 
 .opportunity-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #22c55e;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
   margin-bottom: 20px;
 }
 
@@ -259,6 +260,8 @@
 .form-group {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
 }
 
 .full-width {
@@ -356,9 +359,20 @@
   font-weight: 600;
 }
 
-.status-badge.new { background: #e0f2fe; color: #0369a1; }
-.status-badge.existing { background: #dcfce7; color: #166534; }
-.status-badge.other { background: #f3f4f6; color: #374151; }
+.status-badge.new {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge.existing {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.other {
+  background: #f3f4f6;
+  color: #374151;
+}
 
 /* Close Button */
 .close-btn {
@@ -479,7 +493,7 @@
   z-index: 10000;
   min-width: 320px;
   text-align: center;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
 }
 
 .toast-top {
@@ -526,6 +540,7 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .checkbox-group {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -544,15 +559,19 @@
 .checkbox-item input {
   cursor: pointer;
 }
+
 .grid-item.full-width {
   grid-column: span 3;
 }
-  /* =========================
+
+/* =========================
    MULTI SELECT WITH CHIPS
 ========================= */
 
 .multi-select {
   position: relative;
+  width: 100%;
+  flex: 0 0 auto !important;
 }
 
 .multi-select-input {
@@ -610,7 +629,7 @@
 
 .multi-select-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
   background: #fff;
@@ -618,7 +637,7 @@
   border-radius: 10px;
   max-height: 200px;
   overflow-y: auto;
-  z-index: 50;
+  z-index: 1000;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
@@ -704,6 +723,7 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 /* Stage Cell - Contains badge + progress line */
 .stage-cell {
   display: flex;
@@ -730,7 +750,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px; /* Space between badge and progress bar */
+  gap: 8px;
+  /* Space between badge and progress bar */
   min-width: 220px;
 }
 
@@ -799,7 +820,8 @@
 /* Make sure ProgressTracker looks good in modal */
 .stage-progress-wrapper .progress-tracker {
   width: 100%;
-  height: 24px; /* Slightly larger for modal readability */
+  height: 24px;
+  /* Slightly larger for modal readability */
 }
 
 /* Full-width info item for Stage */
@@ -891,4 +913,3 @@
   background: #ef4444;
   color: #ffffff;
 }
-

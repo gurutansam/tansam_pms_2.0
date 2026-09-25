@@ -1,24 +1,33 @@
 import { useState, useEffect } from "react";
 import "./admincss/WorkCategories.css";
-import { FiPlus, FiEdit2, FiX, FiSave } from "react-icons/fi";
-import { fetchWorkCategories, createWorkCategory,updateWorkCategory  } from "../../services/admin/admin.roles.api";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiSave } from "react-icons/fi";
+import {
+  fetchWorkCategories,
+  createWorkCategory,
+  updateWorkCategory,
+  deleteWorkCategory,
+} from "../../services/admin/admin.roles.api";
+
 export default function CreateWorkCategories() {
   const [categories, setCategories] = useState([
     { id: 1, name: "Electrical", status: "ACTIVE" },
     { id: 2, name: "Mechanical", status: "INACTIVE" },
   ]);
+
+  const loadCategories = async () => {
+    try {
+      const data = await fetchWorkCategories();
+      setCategories(data || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load work categories");
+    }
+  };
+
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await fetchWorkCategories();
-        setCategories(data); // set fetched categories
-      } catch (err) {
-        console.error(err);
-        alert("Failed to load work categories");
-      }
-    };
     loadCategories();
   }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -38,6 +47,18 @@ export default function CreateWorkCategories() {
     setIsEdit(true);
     setForm(category);
     setShowModal(true);
+  };
+
+  const handleDelete = async (category) => {
+    if (!window.confirm(`Are you sure you want to delete work category "${category.name}"?`)) {
+      return;
+    }
+    try {
+      await deleteWorkCategory(category.id);
+      loadCategories();
+    } catch (err) {
+      alert(err.message || "Failed to delete work category");
+    }
   };
 
   const handleChange = (e) => {
@@ -129,13 +150,22 @@ const handleSubmit = async (e) => {
                   </td>
 
                   <td className="col-action center">
-                    <button
-                      className="icon-btn edit"
-                      onClick={() => openEditModal(cat)}
-                      title="Edit Work Category"
-                    >
-                      <FiEdit2 />
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        className="icon-btn"
+                        onClick={() => openEditModal(cat)}
+                        title="Edit Work Category"
+                      >
+                        <FiEdit />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        onClick={() => handleDelete(cat)}
+                        title="Delete Work Category"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

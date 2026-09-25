@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./admincss/Reports.css";
-import { FiPlus, FiEdit2, FiX, FiSave } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiSave } from "react-icons/fi";
 
 export default function Reports() {
   const [reports, setReports] = useState([
@@ -27,6 +27,13 @@ export default function Reports() {
     setIsEdit(true);
     setForm(report);
     setShowModal(true);
+  };
+
+  const handleDelete = (report) => {
+    if (!window.confirm(`Are you sure you want to delete report "${report.name}"?`)) {
+      return;
+    }
+    setReports(reports.filter((r) => r.id !== report.id));
   };
 
   const handleChange = (e) => {
@@ -107,13 +114,22 @@ export default function Reports() {
                   </td>
 
                   <td className="col-action center">
-                    <button
-                      className="icon-btn edit"
-                      onClick={() => openEditModal(report)}
-                      title="Edit Report"
-                    >
-                      <FiEdit2 />
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        className="icon-btn"
+                        onClick={() => openEditModal(report)}
+                        title="Edit Report"
+                      >
+                        <FiEdit />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        onClick={() => handleDelete(report)}
+                        title="Delete Report"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

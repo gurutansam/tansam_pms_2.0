@@ -1,28 +1,16 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
+
 // services/generatedQuotation.api.js
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const GENERATED_QUOTATION_URL = `${API_BASE}/generatequotation`;
 
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
-export const saveGeneratedQuotation = async (quotationFormData) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
+export const saveGeneratedQuotation = async (quotationFormData) => {
   const res = await fetch(GENERATED_QUOTATION_URL, {
     method: "POST",
-    headers: {
-      "x-user-id": user.id,
-      "x-user-role": user.role,
-      "x-user-name": user.username,
-      // ❌ do NOT set Content-Type here for FormData
-    },
+    headers: getBaseAuthHeaders(), // includes Bearer token and user info without Content-Type
     body: quotationFormData, // pass FormData directly
   });
 
@@ -36,15 +24,9 @@ export const saveGeneratedQuotation = async (quotationFormData) => {
 
 
 export const updateGeneratedQuotation = async (id, formData) => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
   const res = await fetch(`${GENERATED_QUOTATION_URL}/${id}`, {
     method: "PUT",
-    headers: {
-      "x-user-id": user.id,
-      "x-user-role": user.role,
-      "x-user-name": user.username,
-    },
+    headers: getBaseAuthHeaders(), // includes Bearer token and user info without Content-Type
     body: formData, // ✅ FormData
   });
 

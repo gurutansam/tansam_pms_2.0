@@ -37,6 +37,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
+      "Authorization",
       "x-user-id",
       "x-user-role",
       "x-user-name",

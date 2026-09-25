@@ -136,11 +136,16 @@
   font-size: 16px;
   color: #334155;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
   background: #e5e7eb;
+  color: #0f172a;
 }
 
 /* ================= MODAL ================= */
@@ -185,17 +190,18 @@
 
 .modal-body input,
 .modal-body select {
-  padding: 10px 12px;
+  padding: 10px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13.5px;
+  color: #0f172a;
 }
 
 .modal-body input:focus,
 .modal-body select:focus {
   outline: none;
-  border-color: #64748b;
-  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2);
+  border-color: #00646e;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.12);
 }
 
 /* ================= MODAL ACTIONS ================= */

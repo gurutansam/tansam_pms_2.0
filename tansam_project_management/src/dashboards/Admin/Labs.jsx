@@ -3,8 +3,9 @@ import {
   fetchLabs,
   createLab,
   updateLab,
+  deleteLab,
 } from "../../services/admin/admin.roles.api";
-import { FiPlus, FiEdit2, FiX, FiSave } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiX, FiSave } from "react-icons/fi";
 import "./admincss/Labs.css";
 
 export default function Labs() {
@@ -46,6 +47,19 @@ export default function Labs() {
       status: lab.status,
     });
     setShowModal(true);
+  };
+
+  const handleDelete = async (lab) => {
+    if (!window.confirm(`Are you sure you want to delete lab "${lab.name}"?`)) {
+      return;
+    }
+
+    try {
+      await deleteLab(lab.id);
+      loadLabs();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleChange = (e) => {
@@ -115,13 +129,22 @@ export default function Labs() {
                   </span>
                 </td>
                 <td className="col-action center">
-                  <button
-                    className="icon-btn edit"
-                    onClick={() => openEditModal(lab)}
-                    title="Edit Lab"
-                  >
-                    <FiEdit2 />
-                  </button>
+                  <div className="action-buttons">
+                    <button
+                      className="icon-btn"
+                      onClick={() => openEditModal(lab)}
+                      title="Edit Lab"
+                    >
+                      <FiEdit />
+                    </button>
+                    <button
+                      className="icon-btn"
+                      onClick={() => handleDelete(lab)}
+                      title="Delete Lab"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

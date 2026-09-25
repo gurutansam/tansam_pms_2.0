@@ -1,52 +1,101 @@
 .quotation-table-wrapper {
   margin-top: 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 .quotation-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .quotation-table th,
 .quotation-table td {
-  border: 1px solid #000;
-  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 12px 16px;
   vertical-align: middle;
 }
 
 .quotation-table th {
-  background: #f3f3f3;
-  text-align: center;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .quotation-table input {
   width: 100%;
-  border: none;
+  border: 1px solid transparent;
   outline: none;
-  padding: 6px;
-  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.quotation-table input:focus {
+  background: #ffffff;
+  border-color: #00646e;
+  box-shadow: 0 0 0 2px rgba(0, 100, 110, 0.12);
 }
 
 .amount {
   text-align: right;
-  font-weight: bold;
+  font-weight: 700;
+  color: #00646e;
 }
 
 .add-row-btn {
-  margin-top: 10px;
-  padding: 6px 14px;
+  margin-top: 14px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #00646e, #008a94);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-row-btn:hover {
+  background: #004d55;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.25);
 }
 
 .remove-btn {
   border: none;
   background: transparent;
   cursor: pointer;
+  color: #ef4444;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background: #fee2e2;
 }
 
 .total-amount {
   text-align: right;
   font-size: 16px;
-  font-weight: bold;
-  margin-top: 10px;
+  font-weight: 700;
+  color: #00646e;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: #e0f2f1;
+  border-radius: 8px;
+  display: inline-block;
+  float: right;
 }

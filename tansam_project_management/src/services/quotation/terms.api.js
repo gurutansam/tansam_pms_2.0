@@ -1,24 +1,11 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const TERMS_URL = `${API_BASE}/terms`;
 
 // Get user headers for authentication
-const getAuthHeaders = () => {
-  const userStr = localStorage.getItem("user");
-  if (!userStr) throw new Error("Not authenticated: User not found in localStorage");
-
-  const user = JSON.parse(userStr);
-  if (!user.id || !user.role || !user.username)
-    throw new Error("Not authenticated: Missing user fields");
-
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
 // Add Terms
 export const addTerms = async (data) => {

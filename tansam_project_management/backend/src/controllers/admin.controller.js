@@ -69,6 +69,26 @@ export const updateRole = async (req, res) => {
 };
 
 /**
+ * DELETE role (ADMIN only)
+ */
+export const deleteRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await connectDB();
+
+    const [result] = await db.execute("DELETE FROM roles WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+
+    res.json({ message: "Role deleted successfully" });
+  } catch (err) {
+    console.error("Delete role error:", err);
+    res.status(500).json({ message: "Failed to delete role" });
+  }
+};
+
+/**
  * GET labs (ADMIN only)
  */
 export const getLabs = async (req, res) => {
@@ -135,6 +155,26 @@ export const updateLab = async (req, res) => {
   } catch (err) {
     console.error("Update labs_admin error:", err);
     res.status(500).json({ message: "Failed to update labs_admin" });
+  }
+};
+
+/**
+ * DELETE lab (ADMIN only)
+ */
+export const deleteLab = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await connectDB();
+
+    const [result] = await db.execute("DELETE FROM labs_admin WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Lab not found" });
+    }
+
+    res.json({ message: "Lab deleted successfully" });
+  } catch (err) {
+    console.error("Delete lab error:", err);
+    res.status(500).json({ message: "Failed to delete lab" });
   }
 };
 /**
@@ -214,6 +254,26 @@ export const updateProjectType = async (req, res) => {
 };
 
 /**
+ * DELETE project type (ADMIN only)
+ */
+export const deleteProjectType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await connectDB();
+
+    const [result] = await db.execute("DELETE FROM project_types_admin WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Project type not found" });
+    }
+
+    res.json({ message: "Project type deleted successfully" });
+  } catch (err) {
+    console.error("Delete project type error:", err);
+    res.status(500).json({ message: "Failed to delete project type" });
+  }
+};
+
+/**
  * GET client types (ADMIN only)
  */
 export const getClientTypes = async (req, res) => {
@@ -280,6 +340,26 @@ export const updateClientType = async (req, res) => {
   } catch (err) {
     console.error("Update client type error:", err);
     res.status(500).json({ message: "Failed to update client type" });
+  }
+};
+
+/**
+ * DELETE client type (ADMIN only)
+ */
+export const deleteClientType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await connectDB();
+
+    const [result] = await db.execute("DELETE FROM client_types_admin WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Client type not found" });
+    }
+
+    res.json({ message: "Client type deleted successfully" });
+  } catch (err) {
+    console.error("Delete client type error:", err);
+    res.status(500).json({ message: "Failed to delete client type" });
   }
 };
 
@@ -357,6 +437,26 @@ export const updateWorkCategory = async (req, res) => {
   } catch (err) {
     console.error("Update work category error:", err);
     res.status(500).json({ message: "Failed to update work category" });
+  }
+};
+
+/**
+ * DELETE work category (ADMIN only)
+ */
+export const deleteWorkCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await connectDB();
+
+    const [result] = await db.execute("DELETE FROM work_categories WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Work category not found" });
+    }
+
+    res.json({ message: "Work category deleted successfully" });
+  } catch (err) {
+    console.error("Delete work category error:", err);
+    res.status(500).json({ message: "Failed to delete work category" });
   }
 };
 

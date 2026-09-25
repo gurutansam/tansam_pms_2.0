@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { connectDB } from "../config/db.js";
 
 export const login = async (req, res) => {
@@ -71,7 +72,20 @@ export const login = async (req, res) => {
       MD: "/ceo",
     };
 
+    // 🔐 Generate JWT token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      },
+      process.env.JWT_SECRET || "tansam_pms_jwt_secret_key_2026_secure",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
+    );
+
     return res.json({
+      token,
       id: user.id,
       email: user.email,
       username: user.username,

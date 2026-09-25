@@ -1,27 +1,245 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+/* ==========================================================================
+   TANSAM PMS - UNIVERSAL DESIGN SYSTEM FOUNDATION
+   Executive Siemens Petrol & Teal Theme (#00646e, #004d55, #008a94, #e0f2f1)
+   Standardized to CEO Projects Blueprint across ALL Logins
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
-  font-family: "Manrope", "Segoe UI", sans-serif;
-  color: #172033;
-  background: #f5f7fb;
-  font-synthesis: none;
+  /* Brand Tokens - Siemens Executive Palette */
+  --siemens-petrol: #00646e;
+  --siemens-petrol-hover: #004d55;
+  --siemens-teal: #008a94;
+  --siemens-teal-subtle: #e0f2f1;
+  --siemens-teal-border: rgba(0, 100, 110, 0.2);
+  --siemens-cyan: #5ce1e6;
+  --siemens-navy: #021a1f;
 
-  /* Siemens Brand Palette Tokens */
-  --primary: #00646e;
-  --primary-hover: #004d55;
-  --primary-light: #009999;
-  --primary-subtle: #e0f2f1;
-  --teal-accent: #5ce1e6;
-  --teal-dark: #011c20;
+  /* Neutrals */
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-input: #cbd5e1;
+  --border-input-hover: #94a3b8;
+
+  /* Typography Colors */
+  --text-main: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-placeholder: #94a3b8;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.04);
+  --shadow-modal: 0 20px 45px rgba(15, 23, 42, 0.16);
+  --shadow-btn-primary: 0 4px 12px rgba(0, 100, 110, 0.25);
+  --shadow-btn-hover: 0 8px 18px rgba(0, 100, 110, 0.35);
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(0, 100, 110, 0.12);
+
+  /* Global Font Stack */
+  font-family: "Inter", "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-main);
+  background: var(--bg-page);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
 }
 
-* { box-sizing: border-box; }
-html, body, #root { min-width: 320px; min-height: 100%; margin: 0; }
-body { min-height: 100vh; }
-button, input, select, textarea { font: inherit; }
-button { -webkit-tap-highlight-color: transparent; }
-.table-wrapper, .card-table { border: 1px solid #e5eaf2; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(26, 39, 67, .045); }
-/* Primary / CTA Buttons across all routes (Siemens Petrol & Teal Gradient) */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-page);
+}
+
+body {
+  min-height: 100vh;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   1. UNIVERSAL TYPOGRAPHY & HEADER STANDARDIZATION
+   Replaces all colorful gradients with authoritative CEO Projects slate
+   ========================================================================== */
+
+/* Remove colorful neon text gradients across all pages */
+body:not(:has(.login-bg)) h1,
+body:not(:has(.login-bg)) h2,
+body:not(:has(.login-bg)) .page-header h2,
+body:not(:has(.login-bg)) .page-title,
+body:not(:has(.login-bg)) .tracker-title,
+body:not(:has(.login-bg)) .opportunity-title,
+body:not(:has(.login-bg)) .assign-header h2,
+body:not(:has(.login-bg)) .member-header h2,
+body:not(:has(.login-bg)) .dept-title,
+body:not(:has(.login-bg)) .client-types-title,
+body:not(:has(.login-bg)) .project-types-title,
+body:not(:has(.login-bg)) .work-categories-title,
+body:not(:has(.login-bg)) .labs-title,
+body:not(:has(.login-bg)) .admin-dashboard-title,
+body:not(:has(.login-bg)) .ceo-dashboard-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  background-clip: initial !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+}
+
+/* Subtitles */
+body:not(:has(.login-bg)) .page-sub,
+body:not(:has(.login-bg)) .page-subtitle,
+body:not(:has(.login-bg)) .dept-subtitle,
+body:not(:has(.login-bg)) .member-subtitle,
+body:not(:has(.login-bg)) .admin-dashboard-subtitle,
+body:not(:has(.login-bg)) .ceo-dashboard-subtitle,
+body:not(:has(.login-bg)) .header-info p {
+  color: #64748b !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* Header Tag / Badge */
+body:not(:has(.login-bg)) .header-badge,
+body:not(:has(.login-bg)) .finance-header-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #00646e;
+  background: #e0f2f1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 100, 110, 0.2);
+}
+
+/* ==========================================================================
+   2. UNIVERSAL FORM FIELDS & CONTROLS STANDARDIZATION
+   All inputs, selects, and textareas get CEO Projects format:
+   10px radius, #cbd5e1 border, 42px height, and #00646e focus ring
+   ========================================================================== */
+
+body:not(:has(.login-bg)) input[type="text"],
+body:not(:has(.login-bg)) input[type="email"],
+body:not(:has(.login-bg)) input[type="password"],
+body:not(:has(.login-bg)) input[type="number"],
+body:not(:has(.login-bg)) input[type="date"],
+body:not(:has(.login-bg)) input[type="month"],
+body:not(:has(.login-bg)) input[type="search"],
+body:not(:has(.login-bg)) select,
+body:not(:has(.login-bg)) textarea,
+body:not(:has(.login-bg)) .form-group input,
+body:not(:has(.login-bg)) .form-group select,
+body:not(:has(.login-bg)) .modal input,
+body:not(:has(.login-bg)) .modal select,
+body:not(:has(.login-bg)) .modal textarea,
+body:not(:has(.login-bg)) .modal-body input,
+body:not(:has(.login-bg)) .modal-body select,
+body:not(:has(.login-bg)) .modal-body textarea,
+body:not(:has(.login-bg)) .opportunity-form input,
+body:not(:has(.login-bg)) .opportunity-form select,
+body:not(:has(.login-bg)) .dept-add-card input,
+body:not(:has(.login-bg)) .search-box input,
+body:not(:has(.login-bg)) .filter-select {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  font-size: 13.5px !important;
+  font-family: inherit !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-sizing: border-box;
+}
+
+/* Exclude TinyMCE and inline table inputs from fixed heights */
+body:not(:has(.login-bg)) input[type="text"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="email"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="password"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="number"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="date"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="month"]:not(.raw-input),
+body:not(:has(.login-bg)) input[type="search"]:not(.raw-input),
+body:not(:has(.login-bg)) select:not(.raw-select) {
+  height: 42px;
+  padding: 0 14px;
+}
+
+/* Global Siemens Focus Ring */
+body:not(:has(.login-bg)) input:focus,
+body:not(:has(.login-bg)) select:focus,
+body:not(:has(.login-bg)) textarea:focus,
+body:not(:has(.login-bg)) .form-group input:focus,
+body:not(:has(.login-bg)) .form-group select:focus,
+body:not(:has(.login-bg)) .modal input:focus,
+body:not(:has(.login-bg)) .modal select:focus,
+body:not(:has(.login-bg)) .modal textarea:focus,
+body:not(:has(.login-bg)) .modal-body input:focus,
+body:not(:has(.login-bg)) .modal-body select:focus,
+body:not(:has(.login-bg)) .modal-body textarea:focus,
+body:not(:has(.login-bg)) .search-box input:focus,
+body:not(:has(.login-bg)) .filter-select:focus {
+  outline: none !important;
+  border-color: #00646e !important;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.12) !important;
+}
+
+/* Placeholder styling */
+body:not(:has(.login-bg)) input::placeholder,
+body:not(:has(.login-bg)) textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Disabled Form Controls */
+body:not(:has(.login-bg)) input:disabled,
+body:not(:has(.login-bg)) select:disabled,
+body:not(:has(.login-bg)) textarea:disabled {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+  opacity: 0.85;
+}
+
+/* Form Labels */
+body:not(:has(.login-bg)) .form-group label,
+body:not(:has(.login-bg)) .modal label,
+body:not(:has(.login-bg)) .modal-body label,
+body:not(:has(.login-bg)) .opportunity-form label {
+  display: block;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 6px !important;
+}
+
+/* ==========================================================================
+   3. UNIVERSAL BUTTONS & HOVER EFFECTS STANDARDIZATION
+   Every primary button lifts -2px with Siemens glow.
+   Every secondary lifts -1px with clean slate border.
+   Every danger/reset button lifts -1px with soft red.
+   ========================================================================== */
+
+/* Primary / CTA Buttons */
 body:not(:has(.login-bg)) .primary-btn,
 body:not(:has(.login-bg)) .btn-primary,
 body:not(:has(.login-bg)) .btn-add-quotation,
@@ -36,17 +254,26 @@ body:not(:has(.login-bg)) .save-tracker-btn,
 body:not(:has(.login-bg)) button.btn-save,
 body:not(:has(.login-bg)) .type-form button,
 body:not(:has(.login-bg)) .opportunity-actions button,
-body:not(:has(.login-bg)) .tracker-actions button {
+body:not(:has(.login-bg)) .tracker-actions button,
+body:not(:has(.login-bg)) .modal-actions button.primary,
+body:not(:has(.login-bg)) .modal-actions button.btn-save,
+body:not(:has(.login-bg)) .modal-actions button[type="submit"] {
   border: 0 !important;
-  border-radius: 9px !important;
+  border-radius: 10px !important;
   background: linear-gradient(135deg, #00646e, #008a94) !important;
   color: #ffffff !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
   box-shadow: 0 4px 12px rgba(0, 100, 110, 0.25) !important;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease !important;
   cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 }
 
+/* Primary Button Hover - Uniform Across Entire App */
 body:not(:has(.login-bg)) .primary-btn:hover,
 body:not(:has(.login-bg)) .btn-primary:hover,
 body:not(:has(.login-bg)) .btn-add-quotation:hover,
@@ -61,19 +288,194 @@ body:not(:has(.login-bg)) .save-tracker-btn:hover,
 body:not(:has(.login-bg)) button.btn-save:hover,
 body:not(:has(.login-bg)) .type-form button:hover,
 body:not(:has(.login-bg)) .opportunity-actions button:hover,
-body:not(:has(.login-bg)) .tracker-actions button:hover {
+body:not(:has(.login-bg)) .tracker-actions button:hover,
+body:not(:has(.login-bg)) .modal-actions button.primary:hover,
+body:not(:has(.login-bg)) .modal-actions button.btn-save:hover,
+body:not(:has(.login-bg)) .modal-actions button[type="submit"]:hover {
   background: #004d55 !important;
-  transform: translateY(-1px) !important;
+  transform: translateY(-2px) !important;
   box-shadow: 0 8px 18px rgba(0, 100, 110, 0.35) !important;
 }
 
-/* Pagination active state */
-body:not(:has(.login-bg)) .pagination button.active {
+/* Primary Button Active */
+body:not(:has(.login-bg)) .primary-btn:active,
+body:not(:has(.login-bg)) .btn-primary:active,
+body:not(:has(.login-bg)) .add-btn:active,
+body:not(:has(.login-bg)) .assign-add-btn:active,
+body:not(:has(.login-bg)) .assign-save-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(0, 100, 110, 0.2) !important;
+}
+
+/* Secondary / Cancel / Ghost Buttons */
+body:not(:has(.login-bg)) .secondary-btn,
+body:not(:has(.login-bg)) .btn-secondary,
+body:not(:has(.login-bg)) .cancel-btn,
+body:not(:has(.login-bg)) .assign-cancel-btn,
+body:not(:has(.login-bg)) .modal-actions button.secondary,
+body:not(:has(.login-bg)) .modal-actions button[type="button"]:not(.danger-btn) {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+body:not(:has(.login-bg)) .secondary-btn:hover,
+body:not(:has(.login-bg)) .btn-secondary:hover,
+body:not(:has(.login-bg)) .cancel-btn:hover,
+body:not(:has(.login-bg)) .assign-cancel-btn:hover,
+body:not(:has(.login-bg)) .modal-actions button.secondary:hover,
+body:not(:has(.login-bg)) .modal-actions button[type="button"]:not(.danger-btn):hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Danger / Reset / Clear Buttons */
+body:not(:has(.login-bg)) .reset-btn,
+body:not(:has(.login-bg)) .clear-btn,
+body:not(:has(.login-bg)) .delete-btn,
+body:not(:has(.login-bg)) .danger-btn {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 10px !important;
+  color: #b91c1c !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+body:not(:has(.login-bg)) .reset-btn:hover,
+body:not(:has(.login-bg)) .clear-btn:hover,
+body:not(:has(.login-bg)) .delete-btn:hover,
+body:not(:has(.login-bg)) .danger-btn:hover {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Table Icon Buttons (Edit, View, Delete) */
+body:not(:has(.login-bg)) .icon-btn {
+  border-radius: 8px !important;
+  padding: 6px 8px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+body:not(:has(.login-bg)) .icon-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+body:not(:has(.login-bg)) .icon-btn.edit:hover,
+body:not(:has(.login-bg)) .assign-edit-btn:hover {
+  background: #e0f2f1 !important;
+  color: #00646e !important;
+}
+
+body:not(:has(.login-bg)) .icon-btn.delete:hover {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+/* ==========================================================================
+   4. UNIVERSAL TABLES, CARDS & MODALS STANDARDIZATION
+   ========================================================================== */
+
+/* Cards & Tables */
+body:not(:has(.login-bg)) .table-card,
+body:not(:has(.login-bg)) .table-wrapper,
+body:not(:has(.login-bg)) .assign-table-card,
+body:not(:has(.login-bg)) .card-table {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  overflow: hidden !important;
+}
+
+/* Table Headers (th) */
+body:not(:has(.login-bg)) thead th,
+body:not(:has(.login-bg)) .table th {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 14px 16px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Table Cells (td) */
+body:not(:has(.login-bg)) tbody td,
+body:not(:has(.login-bg)) .table td {
+  padding: 14px 16px !important;
+  font-size: 13.5px !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  vertical-align: middle !important;
+}
+
+/* Table Row Hover */
+body:not(:has(.login-bg)) tbody tr:hover,
+body:not(:has(.login-bg)) .table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Modals */
+body:not(:has(.login-bg)) .modal-overlay {
+  background: rgba(15, 23, 42, 0.55) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+body:not(:has(.login-bg)) .modal,
+body:not(:has(.login-bg)) .modal-box,
+body:not(:has(.login-bg)) .modal-card,
+body:not(:has(.login-bg)) .view-modal {
+  border-radius: 16px !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Pagination Standardization */
+body:not(:has(.login-bg)) .pagination button,
+body:not(:has(.login-bg)) .page-btn,
+body:not(:has(.login-bg)) .page-number {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: all 0.2s ease !important;
+}
+
+body:not(:has(.login-bg)) .pagination button:hover:not(:disabled),
+body:not(:has(.login-bg)) .page-btn:hover:not(:disabled),
+body:not(:has(.login-bg)) .page-number:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+body:not(:has(.login-bg)) .pagination button.active,
+body:not(:has(.login-bg)) .page-number.active {
   background: #00646e !important;
   color: #ffffff !important;
   border-color: #00646e !important;
+  box-shadow: 0 4px 10px rgba(0, 100, 110, 0.25) !important;
 }
-
-.secondary-btn { border-radius: 9px !important; }
-.modal-overlay { backdrop-filter: blur(4px); }
-.modal-box { border-radius: 16px !important; box-shadow: 0 24px 60px rgba(15, 23, 42, .2) !important; }

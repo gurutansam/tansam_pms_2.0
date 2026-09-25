@@ -1,118 +1,168 @@
-/* ================================
-   FONT & BASE
-================================ */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+/* ==========================================================================
+   PROJECT TYPES MASTER CSS (MATCHING LABS TEMPLATE)
+   ========================================================================== */
 
+/* ---------- LAYOUT ---------- */
 .project-types-container {
-  padding: 28px;
-  font-family: "Inter", sans-serif;
+  padding: 24px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f8fafc;
   min-height: 100vh;
-  color: #0f172a;
+  box-sizing: border-box;
 }
 
-/* ================================
-   HEADER
-================================ */
 .project-types-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .project-types-title {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, #0ea5e9, #22c55e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0f172a;
   margin: 0;
 }
 
-/* ================================
-   ADD BUTTON (same as CreateProject)
-================================ */
+/* ---------- BUTTONS ---------- */
 .primary-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   background: linear-gradient(135deg, #00646e, #008a94);
   color: #fff;
-  padding: 12px 18px;
-  border-radius: 12px;
+  padding: 9px 16px;
+  border-radius: 8px;
   border: none;
-  cursor: pointer;
-  font-weight: 600;
   font-size: 14px;
-  transition: all 0.25s ease;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover {
-  transform: translateY(-2px);
   background: #004d55;
-  box-shadow: 0 8px 20px rgba(0, 100, 110, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 100, 110, 0.3);
 }
 
-/* ================================
-   TABLE CARD (same style)
-================================ */
+.secondary-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #e2e8f0;
+}
+
+/* ================= ICON BUTTON ================= */
+.action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #334155;
+  padding: 6px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #e5e7eb;
+  color: #0f172a;
+}
+
+/* ---------- TABLE ---------- */
 .table-wrapper {
-  background: #fff;
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
 }
 
 .project-types-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.project-types-table thead {
-  background: #f1f5f9;
+.col-name {
+  width: 55%;
+}
+
+.col-status {
+  width: 25%;
+}
+
+.col-action {
+  width: 20%;
 }
 
 .project-types-table th {
-  padding: 14px;
+  padding: 16px;
   font-size: 13px;
   font-weight: 700;
+  background: #f1f5f9;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: #475569;
+  color: #0f172a;
   text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+  letter-spacing: 0.5px;
 }
 
 .project-types-table td {
-  padding: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
   font-size: 14px;
-  border-top: 1px solid #e2e8f0;
+  color: #334155;
 }
 
 .project-types-table tbody tr:hover {
   background: #f8fafc;
-  transition: background 0.2s;
 }
 
-/* Column alignment */
+.project-types-table th.col-action,
+.project-types-table td.col-action {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .center {
-  text-align: center !important;
+  text-align: center;
 }
 
-/* ================================
-   STATUS BADGES (consistent with CreateProject)
-================================ */
+.empty-text {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ---------- STATUS ---------- */
 .status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
+  display: inline-block;
 }
 
 .status-badge.active {
@@ -125,159 +175,74 @@
   color: #991b1b;
 }
 
-/* ================================
-   EDIT ICON BUTTON (same as CreateProject)
-================================ */
-.icon-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 8px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-btn.edit {
-  color: #00646e;
-}
-
-.icon-btn.edit:hover {
-  background: #e0f2f1;
-}
-
-/* ================================
-   EMPTY STATE
-================================ */
-.empty-text {
-  text-align: center;
-  padding: 80px 20px;
-  color: #94a3b8;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-/* ================================
-   MODAL (same premium style as CreateProject)
-================================ */
+/* ---------- MODAL ---------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(6px);
+  background: rgba(15, 23, 42, 0.45);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
 .modal-box {
-  background: white;
-  padding: 32px;
-  width: min(90%, 480px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-  animation: modalFadeIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  background: #ffffff;
+  width: 420px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
 }
 
-.modal-header button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #64748b;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-header button:hover {
-  background: #f1f5f9;
-}
-
-/* Form */
+/* ---------- FORM ---------- */
 .form-label {
   display: block;
-  margin: 16px 0 8px;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
-  color: #0f172a;
+  margin-bottom: 6px;
+  color: #334155;
 }
 
 .form-input,
 .form-select {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: white;
-  font-size: 15px;
-  transition: all 0.2s;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #0f172a;
+  box-sizing: border-box;
+  background: #fff;
 }
 
 .form-input:focus,
 .form-select:focus {
   outline: none;
-  border-color: #22c55e;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  border-color: #00646e;
+  box-shadow: 0 0 0 3px rgba(0, 100, 110, 0.12);
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.secondary-btn {
-  background: #f1f5f9;
-  color: #475569;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.secondary-btn:hover {
-  background: #e2e8f0;
-}
-
-/* Form Group - Stack label + input/select vertically */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  color: #0f172a;
+  gap: 10px;
+  margin-top: 8px;
 }

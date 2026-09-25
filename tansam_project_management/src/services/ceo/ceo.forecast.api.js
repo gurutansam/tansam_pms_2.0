@@ -1,22 +1,11 @@
+import { getAuthHeaders as getBaseAuthHeaders } from "../authHeaders.js";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 // adjust this to your real backend route if needed
 const BASE_URL = `${API_BASE}/ceo/forecast`;
 /* 🔐 AUTH HEADERS */
-const getAuthHeaders = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user) {
-    throw new Error("User not logged in");
-  }
-
-  return {
-    "Content-Type": "application/json",
-    "x-user-id": user.id,
-    "x-user-role": user.role,
-    "x-user-name": user.username,
-  };
-};
+const getAuthHeaders = () => getBaseAuthHeaders(true);
 
 /* ================= GET ================= */
 export const fetchForecasts = async () => {
